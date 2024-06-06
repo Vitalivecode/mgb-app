@@ -85,18 +85,10 @@ class AppUtils {
               TextButton(
                   onPressed: () {
                     Get.toNamed(Routes.ORDER_ALBUM);
-                    // Navigator.pop(context);
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => OrderAlbum(
-                    //           images: fileImageArray,
-                    //         )));
                   },
                   child: const Text("Confirm")),
               TextButton(
                   onPressed: () {
-                    // Navigator.of(context).pop();
                     Get.back();
                   },
                   child: const Text("Cancel"))
@@ -120,12 +112,14 @@ class AppUtils {
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
               child: const Row(
                 children: <Widget>[
-                  CircularProgressIndicator(
-                    strokeWidth: 3,
-                    backgroundColor: Colors.black12,
+                  Expanded(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      backgroundColor: Colors.black12,
+                    ),
                   ),
                   SizedBox(width: 30),
-                  Text('Please Wait.....')
+                  Expanded(child: Text('Please Wait.....'))
                 ],
               ),
             ),

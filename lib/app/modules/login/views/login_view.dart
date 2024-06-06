@@ -94,7 +94,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 MyButton(
                     onPress:() async {
-                      return await controller.check();
+                      return await controller.check(context);
                     },
                     btntext: "Get OTP",
                     color: AppColors.blue,

@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
-
-import 'package:get/get.dart';
-import 'package:mygallerybook/core/app_colors.dart';
-
-import 'package:mygallerybook/app/modules/subscription/controllers/subscription_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mygallerybook/app/modules/subscription/controllers/subscription_controller.dart';
+import 'package:mygallerybook/core/app_colors.dart';
 
 class SubscriptionView extends GetView<SubscriptionController> {
   const SubscriptionView({super.key});
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -22,7 +21,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 Icons.arrow_back,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
+                // Navigator.pop(context);
               },
             )),
         body: Container(
@@ -107,8 +107,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
                           ),
                         ],
                       );
-                    }
-                    else return const IgnorePointer();
+                    } else
+                      return const IgnorePointer();
                   })
             ],
           ),

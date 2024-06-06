@@ -12,9 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginController extends GetxController {
   final phoneNumber = TextEditingController();
 
-  get context => BuildContext;
-
-  check() async {
+  check(BuildContext context) async {
     if (phoneNumber.text == "") {
       AppUtils.flushBarshow("Enter Phone Number", context, AppColors.red);
     } else if (phoneNumber.text.length != 10) {
@@ -28,21 +26,6 @@ class LoginController extends GetxController {
     }
   }
 
-  // String validatePhoneNumber(String value){
-  //  if (value.isEmpty) {
-  //   return "Enter Phone Number";
-  //  }
-  //  else if (value.length!=10) {
-  //   return "Enter 10 digit Valid Phone Number";
-  //  }
-  //  else if (!value.isPhoneNumber) {
-  //   return "Enter Valid Phone Number";
-  //  }
-  //  else{
-  //   AppUtils.showDialog(text: "Please Wait...");
-  //  }
-  //  return "null";
-  // }
   sendotp() async {
     var url = Uri.parse(AppUrls.productionHost + AppUrls.getotp);
     var request = http.MultipartRequest("POST", url);
@@ -56,10 +39,8 @@ class LoginController extends GetxController {
       prefs.setString("cPhone", phoneNumber.text);
       prefs.setString("cid", data);
       Get.toNamed(Routes.OTP_VERIFICATION);
-      // Navigator.of(context).pushReplacement(otproute());
     } else {
       Get.back();
-      // Navigator.of(context).pop(true);
     }
   }
 }

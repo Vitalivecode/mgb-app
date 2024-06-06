@@ -1,7 +1,11 @@
 import 'package:get/get.dart';
 
+import '../modules/all_orders/bindings/all_orders_binding.dart';
+import '../modules/all_orders/views/all_orders_view.dart';
 import '../modules/business/bindings/business_binding.dart';
 import '../modules/business/views/business_view.dart';
+import '../modules/contact_support/bindings/contact_support_binding.dart';
+import '../modules/contact_support/views/contact_support_view.dart';
 import '../modules/create_address/bindings/create_address_binding.dart';
 import '../modules/create_address/views/create_address_view.dart';
 import '../modules/create_profile/bindings/create_profile_binding.dart';
@@ -14,10 +18,16 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/order_album/bindings/order_album_binding.dart';
 import '../modules/order_album/views/order_album_view.dart';
+import '../modules/order_details/bindings/order_details_binding.dart';
+import '../modules/order_details/views/order_details_view.dart';
 import '../modules/otp_verification/bindings/otp_verification_binding.dart';
 import '../modules/otp_verification/views/otp_verification_view.dart';
 import '../modules/payment/bindings/payment_binding.dart';
 import '../modules/payment/views/payment_view.dart';
+import '../modules/payment_history/bindings/payment_history_binding.dart';
+import '../modules/payment_history/views/payment_history_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
@@ -92,6 +102,31 @@ class AppPages {
       name: _Paths.PAYMENT,
       page: () => const PaymentView(),
       binding: PaymentBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_HISTORY,
+      page: () => const PaymentHistoryView(),
+      binding: PaymentHistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.ALL_ORDERS,
+      page: () => const AllOrdersView(),
+      binding: AllOrdersBinding(),
+    ),
+    GetPage(
+      name: _Paths.ORDER_DETAILS,
+      page: () => const OrderDetailsView(),
+      binding: OrderDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONTACT_SUPPORT,
+      page: () => const ContactSupportView(),
+      binding: ContactSupportBinding(),
     ),
   ];
 }

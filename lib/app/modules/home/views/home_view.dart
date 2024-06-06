@@ -31,7 +31,6 @@ class HomeView extends GetView<HomeController> {
             : () async {
           Feedback.forTap(context);
           HapticFeedback.lightImpact();
-          // Navigator.of(context).push(pickimages());
           Get.toNamed(Routes.IMAGEPICKER);
         },
         child: const Icon(Icons.add),
@@ -60,10 +59,8 @@ class HomeView extends GetView<HomeController> {
                   height: width * .15,
                   splashColor: Colors.transparent,
                   onPressed: () {
-                    // setState(() {
-                    //   currentScreen = Home();
-                    //   currentIndex = 0;
-                    // });
+                      Get.toNamed(Routes.BUSINESS);
+                      controller.currentIndex = 0;
                   },
                   child: Icon(
                     Icons.business,
@@ -80,6 +77,8 @@ class HomeView extends GetView<HomeController> {
                     minWidth: width * .5,
                     height: width * .15,
                     onPressed: () {
+                      Get.toNamed(Routes.SETTINGS);
+                      controller.currentIndex=1;
                       // setState(() {
                       //   currentScreen = Settings();
                       //   currentIndex = 1;

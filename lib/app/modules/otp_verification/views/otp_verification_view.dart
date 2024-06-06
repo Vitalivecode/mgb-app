@@ -5,6 +5,7 @@ import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
 import 'package:mygallerybook/app/modules/otp_verification/controllers/otp_verification_controller.dart';
 import 'package:mygallerybook/core/app_assets.dart';
 import 'package:mygallerybook/core/app_colors.dart';
+import 'package:mygallerybook/core/app_utils.dart';
 
 class OtpVerificationView extends GetView<OtpVerificationController> {
   const OtpVerificationView({super.key});
@@ -13,7 +14,6 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
@@ -28,7 +28,9 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 Transform.translate(
                   offset: Offset(-width * .4, 0),
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.back();
+                    },
                     icon: const Icon(
                       Icons.arrow_back_ios,
                       color: Colors.white,
@@ -60,7 +62,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "OTP Sent to ",
+                        "OTP Sent to",
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge
@@ -89,9 +91,10 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   MyButton(
                     onPress: () {
                       if (controller.otp == "") {
-                        // flushBarshow("Please Enter OTP", context, red);
+                        AppUtils.flushBarshow(
+                            "Please Enter OTP", context, AppColors.red);
                       } else {
-                        controller.verify();
+                        controller.verify(context);
                       }
                     },
                     btntext: "Verify OTP",
@@ -110,7 +113,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                             ?.copyWith(fontSize: 16, color: AppColors.black),
                       ),
                       GestureDetector(
-                        onTap: controller.resendotp,
+                        onTap: () async => await controller.resendotp(context),
                         child: Text(
                           "Resend",
                           style: Theme.of(context)

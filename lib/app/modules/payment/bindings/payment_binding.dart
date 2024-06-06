@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../controllers/payment_controller.dart';
+import 'package:mygallerybook/app/modules/payment/controllers/payment_controller.dart';
 
 class PaymentBinding extends Bindings {
   @override

@@ -15,6 +15,11 @@ abstract class Routes {
   static const SETTINGS = _Paths.SETTINGS;
   static const CREATE_PROFILE = _Paths.CREATE_PROFILE;
   static const PAYMENT = _Paths.PAYMENT;
+  static const PROFILE = _Paths.PROFILE;
+  static const PAYMENT_HISTORY = _Paths.PAYMENT_HISTORY;
+  static const ALL_ORDERS = _Paths.ALL_ORDERS;
+  static const ORDER_DETAILS = _Paths.ORDER_DETAILS;
+  static const CONTACT_SUPPORT = _Paths.CONTACT_SUPPORT;
 }
 
 abstract class _Paths {
@@ -31,4 +36,9 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const CREATE_PROFILE = '/create-profile';
   static const PAYMENT = '/payment';
+  static const PROFILE = '/profile';
+  static const PAYMENT_HISTORY = '/payment-history';
+  static const ALL_ORDERS = '/all-orders';
+  static const ORDER_DETAILS = '/order-details';
+  static const CONTACT_SUPPORT = '/contact-support';
 }

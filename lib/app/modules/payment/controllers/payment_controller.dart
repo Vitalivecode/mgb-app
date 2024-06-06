@@ -102,7 +102,6 @@ class PaymentController extends GetxController {
       pay = true;
     Future.delayed(const Duration(milliseconds: 5000), () {
       Get.toNamed(Routes.HOME);
-      // Navigator.of(context).pushReplacement(homepageroute());
     });
   }
 
@@ -119,13 +118,15 @@ class PaymentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    print("these are the arguments:::::>  $args");
     _razorpay = Razorpay();
     _razorpay?.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay?.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay?.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-      // selectedpack = data;
-      // pack = index;
-      // mycolor = color;
+      selectedpack = args['data'];
+      pack = args['index'];
+      mycolor = args['color'];
       print(pack);
       print(selectedpack[pack]["sId"]);
     MyGalleryBookRepository.getCPhone().then(updatecphone);
