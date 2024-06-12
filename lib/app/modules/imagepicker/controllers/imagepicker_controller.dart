@@ -10,11 +10,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:system_info/system_info.dart';
 
 class ImagepickerController extends GetxController {
-
   List<File> images = [];
   List<File> fileImageArray = [];
   List<Widget> imagesListUI = [];
-  var isLoading = false;
+  bool isLoading = false;
   late int ram;
 
   showDeviceLowSpecAlert() async {
@@ -41,101 +40,106 @@ class ImagepickerController extends GetxController {
       appDir.deleteSync(recursive: true);
     }
   }
-  alertDialogOfLowSpecUI(context) {
+
+  Future alertDialogOfLowSpecUI(BuildContext context) {
     return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Phone Low Specification"),
-            content: const Text(
-                "Your phone has the less system requirement at running this app. so upload the images 25 at a time"),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    var count = 0;
-                    Navigator.popUntil(context, (route) {
-                      if (count == 2) {
-                        return true;
-                      } else {
-                        count++;
-                        return false;
-                      }
-                    });
-                  },
-                  child: const Text('No')),
-              const SizedBox(
-                width: 10,
-              ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    loadAssets(context);
-                  },
-                  child: const Text('Yes'))
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Phone Low Specification'),
+          content: const Text(
+            'Your phone has the less system requirement at running this app. so upload the images 25 at a time',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                var count = 0;
+                Navigator.popUntil(context, (route) {
+                  if (count == 2) {
+                    return true;
+                  } else {
+                    count++;
+                    return false;
+                  }
+                });
+              },
+              child: const Text('No'),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+                // Navigator.pop(context);
+                loadAssets(context);
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  loadAssets(context) async {
+  Future<List<File>> loadAssets(context) async {
     try {
-      if (fileImageArray.length > 0 && fileImageArray.length < 25) {
-        var result = await FilePicker.platform.pickFiles(
+      if (fileImageArray.isNotEmpty && fileImageArray.length < 25) {
+        final result = await FilePicker.platform.pickFiles(
           allowMultiple: true,
           type: FileType.image,
         );
-        // var files = result.paths.map((path) => File(path));
-        var files = result!.files.toList();
+        final files = result!.files.toList();
         for (var i = 0; i < result.files.length; i++) {
           fileImageArray.add(File(files[i].path!));
         }
       }
 
-      if (fileImageArray.length == 0) {
-        var result = await FilePicker.platform.pickFiles(
+      if (fileImageArray.isEmpty) {
+        final result = await FilePicker.platform.pickFiles(
           allowMultiple: true,
           type: FileType.image,
         );
-        var files = result!.files.toList();
-        for (var i = 0; i < files.length; i++) {
+        final files = result!.files.toList();
+        for (int i = 0; i < files.length; i++) {
           fileImageArray.add(File(files[i].path!));
         }
       }
 
       if (fileImageArray.length > 25) {
         fileImageArray.removeRange(25, fileImageArray.length);
-        AppUtils.flushBarshow(
-            "Uploading 25 Images is the limit for uploading at a time removing the extra images",
-            context,
-            Colors.red);
+        AppUtils.flushbarShow(
+          Colors.red,
+          'Uploading 25 Images is the limit for uploading at a time removing the extra images',
+          context as BuildContext,
+        );
       }
-
-      if (fileImageArray != null) {
-          images = fileImageArray;
-          fileImageArray = fileImageArray;
-          buildGridView(context);
-
-        return fileImageArray;
-      }
+      images = fileImageArray;
+      fileImageArray = fileImageArray;
+      buildGridView(context);
+      return fileImageArray;
     } on Exception catch (e) {
-      print("cannot select the images $e");
+      print('cannot select the images $e');
+      return [];
     }
   }
+
   buildGridView(context) {
     imagesListUI = [];
-    print("inside the fileupload");
+    print('inside the fileupload');
     if (imagesListUI.length <= 20) {
       for (var i = 0; i < images.length; i++) {
-        imagesListUI.add(Padding(
-            padding: const EdgeInsets.all(1.0),
+        imagesListUI.add(
+          Padding(
+            padding: const EdgeInsets.all(1),
             child: InkWell(
               onTap: () {
                 showDialog<void>(
-                  context: context,
+                  context: context as BuildContext,
                   barrierDismissible: false, // user must tap button!
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('${basename(images[i].path)}'),
+                      title: Text(basename(images[i].path)),
                       content: SingleChildScrollView(
                         child: ListBody(
                           children: <Widget>[
@@ -152,7 +156,8 @@ class ImagepickerController extends GetxController {
                         TextButton(
                           child: const Text('Close'),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Get.back();
+                            // Navigator.of(context).pop();
                           },
                         ),
                       ],
@@ -163,17 +168,19 @@ class ImagepickerController extends GetxController {
               child: Card(
                 color: AppColors.blue,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: ListTile(
                     leading: const Icon(Icons.image, color: AppColors.white),
                     title: Text(
-                      "${basename(images[i].path)}",
+                      basename(images[i].path),
                       style: const TextStyle(color: AppColors.white),
                     ),
                   ),
                 ),
               ),
-            )));
+            ),
+          ),
+        );
       }
       imagesListUI = imagesListUI;
       // setState(() {

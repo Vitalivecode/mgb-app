@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
-import '../controllers/order_details_controller.dart';
+import 'package:mygallerybook/app/modules/order_details/controllers/order_details_controller.dart';
 
 class OrderDetailsView extends GetView<OrderDetailsController> {
-  const OrderDetailsView({Key? key}) : super(key: key);
+  const OrderDetailsView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

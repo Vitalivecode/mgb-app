@@ -13,15 +13,15 @@ import 'package:url_launcher/url_launcher.dart';
 class SubscriptionController extends GetxController {
   Future? packs;
   List<Widget> templateCards = [];
-  var isLoaded = false;
+  bool isLoaded = false;
   var details;
   List<Widget> subscriptionCards = [];
 
   getpacks() async {
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.packs);
-    var request = http.MultipartRequest("GET", url);
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.packs);
+    final request = http.MultipartRequest('GET', url);
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
     details = jsonDecode(data);
     getTemplateImages();
     subscriptionPackCards();
@@ -30,34 +30,39 @@ class SubscriptionController extends GetxController {
   }
 
   subscriptionPackCards() {
-    for (var index = 0; index < details["SubscriptionData"].length; index++) {
+    for (var index = 0; index < details['SubscriptionData'].length; index++) {
       subscriptionCards.add(
         SizedBox(
           width: double.infinity,
           child: SubscriptionCards(
-            month: details["SubscriptionData"][index]["sMonths"],
-            title: details["SubscriptionData"][index]["sName"],
-            offer: details["SubscriptionData"][index]["sOfferCost"],
-            amount: (int.parse(details["SubscriptionData"][index]["sCost"]) /
-                    int.parse(details["SubscriptionData"][index]["sMonths"]))
+            month: details['SubscriptionData'][index]['sMonths'].toString(),
+            title: details['SubscriptionData'][index]['sName'].toString(),
+            offer: details['SubscriptionData'][index]['sOfferCost'].toString(),
+            amount: (int.parse(details['SubscriptionData'][index]['sCost']
+                        .toString()) /
+                    int.parse(details['SubscriptionData'][index]['sMonths']
+                        .toString()))
                 .round()
                 .toString(),
-            albums: details["SubscriptionData"][index]["sAlbums"],
+            albums: details['SubscriptionData'][index]['sAlbums'].toString(),
             color: index == 0
                 ? AppColors.color1
                 : index == 1
                     ? AppColors.color2
                     : AppColors.color3,
             onPress: () {
-              Get.toNamed(Routes.PAYMENT, arguments: {
-                'data': details["SubscriptionData"],
-                'index': index,
-                'color': index == 0
-                    ? AppColors.color1
-                    : index == 1
-                        ? AppColors.color2
-                        : AppColors.color3,
-              });
+              Get.toNamed(
+                Routes.PAYMENT,
+                arguments: {
+                  'data': details['SubscriptionData'],
+                  'index': index,
+                  'color': index == 0
+                      ? AppColors.color1
+                      : index == 1
+                          ? AppColors.color2
+                          : AppColors.color3,
+                },
+              );
             },
           ),
         ),
@@ -66,31 +71,36 @@ class SubscriptionController extends GetxController {
   }
 
   getTemplateImages() {
-    for (var i = 0; i < details["TemplateData"].length; i++) {
-      templateCards.add(InkWell(
-        onTap: () async {
-          if (await canLaunchUrl(
-              Uri.parse((details["TemplateData"][i]["tURL"])))) {
-            launchUrl(details["TemplateData"][i]["tURL"]);
-          }
-        },
-        child: Builder(builder: (context) {
-          return Card(
-            elevation: 4,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CachedNetworkImage(
-                imageUrl: AppUrls.productionHost +
-                    AppUrls.templateimages +
-                    details["TemplateData"][i]["tImage"],
-                fit: BoxFit.fill,
-                height: 500,
-                width: 500,
-              ),
-            ),
-          );
-        }),
-      ));
+    for (var i = 0; i < details['TemplateData'].length; i++) {
+      templateCards.add(
+        InkWell(
+          onTap: () async {
+            if (await canLaunchUrl(
+              Uri.parse(details['TemplateData'][i]['tURL'].toString()),
+            )) {
+              launchUrl(details['TemplateData'][i]['tURL'] as Uri);
+            }
+          },
+          child: Builder(
+            builder: (context) {
+              return Card(
+                elevation: 4,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: CachedNetworkImage(
+                    imageUrl: AppUrls.productionHost +
+                        AppUrls.templateimages +
+                        details['TemplateData'][i]['tImage'].toString(),
+                    fit: BoxFit.fill,
+                    height: 500,
+                    width: 500,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
     }
   }
 

@@ -33,7 +33,7 @@ class LoginView extends GetView<LoginController> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "My Gallery Book",
+                    'My Gallery Book',
                     style: textTheme.bodyLarge!
                         .copyWith(fontSize: 26, color: AppColors.white),
                   ),
@@ -49,58 +49,67 @@ class LoginView extends GetView<LoginController> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return "Enter Phone Number";
+                      return 'Enter Phone Number';
                     } else if (value.length != 10) {
-                      return "Enter 10 digit Valid Phone Number";
+                      return 'Enter 10 digit Valid Phone Number';
                     } else if (!value.isPhoneNumber) {
-                      return "Enter Valid Phone Number";
+                      return 'Enter Valid Phone Number';
                     } else {
-                      AppUtils.showDialog(text: "Please Wait...");
+                      AppUtils.showDialog(text: 'Please Wait...');
                     }
+                    return null;
                   },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(10),
                     FilteringTextInputFormatter.digitsOnly,
                   ],
                   style: textTheme.bodyLarge!.copyWith(
-                      fontSize: width * .04, inherit: true, color: Colors.black),
+                    fontSize: width * .04,
+                    inherit: true,
+                    color: Colors.black,
+                  ),
                   decoration: InputDecoration(
                     errorStyle: textTheme.bodyLarge!.copyWith(
-                        fontSize: width * .03,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.red),
+                      fontSize: width * .03,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.red,
+                    ),
                     isDense: true,
                     prefixIcon: const Icon(Icons.sim_card),
                     filled: true,
                     fillColor: AppColors.blue.withOpacity(.15),
-                    labelText: "Phone Number",
+                    labelText: 'Phone Number',
                     labelStyle: textTheme.bodyLarge!.copyWith(
-                        fontSize: width * .04,
-                        inherit: true,
-                        color: Colors.black.withOpacity(0.8)),
-                    hintText: "Enter Phone Number",
+                      fontSize: width * .04,
+                      inherit: true,
+                      color: Colors.black.withOpacity(0.8),
+                    ),
+                    hintText: 'Enter Phone Number',
                     hintStyle: textTheme.bodyLarge!.copyWith(
-                        fontSize: width * .04,
-                        inherit: true,
-                        color: Colors.black.withOpacity(0.4)),
+                      fontSize: width * .04,
+                      inherit: true,
+                      color: Colors.black.withOpacity(0.4),
+                    ),
                     contentPadding: EdgeInsets.symmetric(vertical: width * .04),
                     border: UnderlineInputBorder(
-                        borderRadius: BorderRadius.circular(width * .04),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(width * .04),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
                 const SizedBox(
                   height: 22,
                 ),
                 MyButton(
-                    onPress:() async {
-                      return await controller.check(context);
-                    },
-                    btntext: "Get OTP",
-                    color: AppColors.blue,
-                    textcolor: AppColors.white)
+                  onPress: () async {
+                    return await controller.check(context);
+                  },
+                  btntext: 'Get OTP',
+                  color: AppColors.blue,
+                  textcolor: AppColors.white,
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),

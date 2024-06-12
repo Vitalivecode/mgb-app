@@ -9,22 +9,20 @@ class SubscriptionView extends GetView<SubscriptionController> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text('Subscriptions'),
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-              ),
-              onPressed: () {
-                Get.back();
-                // Navigator.pop(context);
-              },
-            )),
+          title: const Text('Subscriptions'),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+            ),
+            onPressed: Get.back,
+          ),
+        ),
         body: Container(
           height: height,
           width: width,
@@ -33,14 +31,14 @@ class SubscriptionView extends GetView<SubscriptionController> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
-                  top: 20.0,
+                  top: 20,
                 ),
                 child: buildCarouselSlider(),
               ),
               const SizedBox(height: 20),
               Center(
                 child: Text(
-                  "Select Subscription Pack",
+                  'Select Subscription Pack',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
@@ -48,7 +46,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 child: SizedBox(
                   width: width * .7,
                   child: Text(
-                    "Select your Subscription Pack to get activated and order the books",
+                    'Select your Subscription Pack to get activated and order the books',
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
@@ -59,57 +57,58 @@ class SubscriptionView extends GetView<SubscriptionController> {
               ),
               const SizedBox(height: 20),
               FutureBuilder(
-                  future: controller.packs,
-                  // ignore: missing_return
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const LinearProgressIndicator();
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      print("inside the done state");
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            left: width * 0.05, right: width * 0.05),
-                        child: Column(
-                          children: controller.subscriptionCards,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            height: height * 0.5,
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.signal_wifi_off,
-                                  size: 80,
-                                  color: AppColors.blue,
+                future: controller.packs,
+                // ignore: missing_return
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const LinearProgressIndicator();
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    print('inside the done state');
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        left: width * 0.05,
+                        right: width * 0.05,
+                      ),
+                      child: Column(
+                        children: controller.subscriptionCards,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: height * 0.5,
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.signal_wifi_off,
+                                size: 80,
+                                color: AppColors.blue,
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              Text(
+                                'Failed To Load the Data Please connect to internet and try again',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Text(
-                                  'Failed To Load the Data Please connect to internet and try again',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    } else
-                      return const IgnorePointer();
-                  })
+                        ),
+                      ],
+                    );
+                  } else
+                    return const IgnorePointer();
+                },
+              ),
             ],
           ),
         ),
@@ -120,10 +119,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
   CarouselSlider buildCarouselSlider() {
     return CarouselSlider(
       options: CarouselOptions(
-        initialPage: 0,
-        height: 200.0,
+        height: 200,
         autoPlay: true,
-        viewportFraction: 0.8,
         enlargeCenterPage: true,
         aspectRatio: 0.5,
       ),

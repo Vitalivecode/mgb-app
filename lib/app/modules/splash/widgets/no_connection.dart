@@ -16,33 +16,33 @@ class _NoConnectionState extends State<NoConnection> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error, size: 100, color: AppColors.red),
-            const SizedBox(
-              height: 40,
-            ),
-            const Text(
-              "No Internet Connection",
-              style: TextStyle(color: Colors.red),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            MyButton(
-              btntext: "Retry",
-              textcolor: AppColors.white,
-              color: AppColors.red,
-              border: true,
-              onPress: () {
-                Get.toNamed(Routes.SPLASH);
-              },
-            )
-          ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 100, color: AppColors.red),
+              const SizedBox(
+                height: 40,
+              ),
+              const Text(
+                'No Internet Connection',
+                style: TextStyle(color: Colors.red),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              MyButton(
+                btntext: 'Retry',
+                textcolor: AppColors.white,
+                color: AppColors.red,
+                onPress: () {
+                  Get.toNamed(Routes.SPLASH);
+                },
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }

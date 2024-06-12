@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
 import 'package:mygallerybook/app/routes/app_pages.dart';
 import 'package:mygallerybook/core/app_colors.dart';
@@ -10,30 +10,16 @@ import 'package:mygallerybook/core/app_urls.dart';
 import 'package:mygallerybook/core/app_utils.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart'as http;
 
 class PaymentController extends GetxController {
   int totalamount = 0;
   Razorpay? _razorpay;
-  var selectedpack, pack;
-
-
-  String? phone, email, cid, btntext = "Pay Securly";
+  var selectedpack;
+  var pack;
+  String? btntext = 'Pay Securly';
   Color? mycolor;
 
-  get context => BuildContext;
-
-  updatecid(String? id) {
-      cid = id;
-  }
-
-  updatecphone(String? phone) {
-      phone = phone;
-  }
-
-  updatecemail(String? email) {
-      email = email;
-  }
+  Type get context => BuildContext;
 
   @override
   void dispose() {
@@ -41,16 +27,19 @@ class PaymentController extends GetxController {
     _razorpay?.clear();
   }
 
-  void openCheckout(amount) async {
-    var options = {
+  Future<void> openCheckout(amount) async {
+    final options = {
       'key': 'rzp_live_auFW5yy8TzDkPk',
       'amount': amount * 100,
       'name': 'My Gallerybook!',
       'description': 'My Gallerybook Subscription',
-      'prefill': {'contact': phone, 'email': email},
+      'prefill': {
+        'contact': MyGalleryBookRepository.getCPhone(),
+        'email': MyGalleryBookRepository.getCEmail()
+      },
       'extrenal': {
-        'wallets': ['paytm']
-      }
+        'wallets': ['paytm'],
+      },
     };
     try {
       _razorpay?.open(options);
@@ -63,32 +52,32 @@ class PaymentController extends GetxController {
 
   buySubscription(String payid) async {
     print(payid);
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.payment);
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.payment);
     print(url);
 
-    var request = http.MultipartRequest("POST", url);
-    request.fields['cId'] = cid!;
-    request.fields['sId'] = selectedpack[pack]["sId"];
-    request.fields['sMonths'] = selectedpack[pack]["sMonths"];
-    request.fields['sRemainAlbums'] = selectedpack[pack]["sAlbums"];
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cId'] = MyGalleryBookRepository.getCId();
+    request.fields['sId'] = selectedpack[pack]['sId'].toString();
+    request.fields['sMonths'] = selectedpack[pack]['sMonths'].toString();
+    request.fields['sRemainAlbums'] = selectedpack[pack]['sAlbums'].toString();
     request.fields['amountPaid'] =
-    int.parse(selectedpack[pack]["sOfferCost"]) > 0
-        ? selectedpack[pack]["sOfferCost"]
-        : selectedpack[pack]["sCost"];
+        int.parse(selectedpack[pack]['sOfferCost']) > 0
+            ? selectedpack[pack]['sOfferCost']
+            : selectedpack[pack]['sCost'];
     request.fields['transactionID'] = payid;
-    print(request.fields.toString());
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
+    print(request.fields);
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
     print(data);
-    print("StatusCode:${response.statusCode}");
+    print('StatusCode:${response.statusCode}');
     if (response.statusCode == 200) {
       var details;
-        details = jsonDecode(data);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("payment", details["payment"]["pId"]);
+      details = jsonDecode(data);
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('payment', details['payment']['pId'].toString());
     } else {
-        var datai = jsonDecode(data);
-        print(datai);
+      final datai = jsonDecode(data);
+      print(datai);
       print(response.statusCode);
     }
   }
@@ -96,41 +85,50 @@ class PaymentController extends GetxController {
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print(response.paymentId);
     buySubscription(response.paymentId!);
-    AppUtils.flushBarshow("Success:${response.paymentId!}", context, AppColors.green);
-      mycolor = AppColors.green;
-      btntext = "Please Wait";
-      pay = true;
+    AppUtils.flushbarShow(
+      AppColors.green,
+      'Success:${response.paymentId!}',
+      context as BuildContext,
+    );
+    mycolor = AppColors.green;
+    btntext = 'Please Wait';
+    pay = true;
     Future.delayed(const Duration(milliseconds: 5000), () {
       Get.toNamed(Routes.HOME);
     });
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    AppUtils.flushBarshow("ERROR:${response.code}-${response.message!}",
-        context, AppColors.red);
-      mycolor = AppColors.red;
-      btntext = "Try Again";
+    AppUtils.flushbarShow(
+      AppColors.red,
+      'ERROR:${response.code}-${response.message!}',
+      context as BuildContext,
+    );
+    mycolor = AppColors.red;
+    btntext = 'Try Again';
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    AppUtils.flushBarshow("External Wallet${response.walletName!}", context, AppColors.color3);
+    AppUtils.flushbarShow(
+      AppColors.color3,
+      'External Wallet${response.walletName!}',
+      context as BuildContext,
+    );
   }
+
   @override
   void onInit() {
     super.onInit();
     final args = Get.arguments;
-    print("these are the arguments:::::>  $args");
+    print('these are the arguments:::::>  $args');
     _razorpay = Razorpay();
     _razorpay?.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay?.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay?.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-      selectedpack = args['data'];
-      pack = args['index'];
-      mycolor = args['color'];
-      print(pack);
-      print(selectedpack[pack]["sId"]);
-    MyGalleryBookRepository.getCPhone().then(updatecphone);
-    MyGalleryBookRepository.getCEmail().then(updatecemail);
-    MyGalleryBookRepository.getCId().then(updatecid);
-    }
+    selectedpack = args['data'];
+    pack = args['index'];
+    mycolor = args['color'] as Color;
+    print(pack);
+    print(selectedpack[pack]['sId']);
+  }
 }

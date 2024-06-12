@@ -11,43 +11,49 @@ import 'package:mygallerybook/core/app_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerificationController extends GetxController {
-  String? otp = "", cid, cPhone, aid;
+  String? otp = '';
+
+  // String? cid;
+  // String? cPhone;
+  // String? aid;
 
   verify(BuildContext context) async {
     AppUtils.poPup(context);
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.verifyotp);
-    var request = http.MultipartRequest("POST", url);
-    request.fields['cId'] = cid!;
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.verifyotp);
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cId'] = MyGalleryBookRepository.getCId();
     request.fields['cOTP'] = otp!;
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
     print(data);
-    if (data == "No Customer") {
-      AppUtils.flushBarshow(
-          "OTP do not Match, Please Try again", context, AppColors.red);
-    } else if (data == "null") {
+    if (data == 'No Customer') {
+      AppUtils.flushbarShow(
+        AppColors.red,
+        'OTP do not Match, Please Try again',
+        context,
+      );
+    } else if (data == 'null') {
       Get.toNamed(Routes.CREATE_PROFILE);
     } else {
       var details;
       details = jsonDecode(data);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("eMail", details["cEmail"]);
-      prefs.setString("pId", details["pId"]);
-      MyGalleryBookRepository.setUserName(details);
-
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('eMail', details['cEmail'].toString());
+      prefs.setString('pId', details['pId'].toString());
+      MyGalleryBookRepository.setUserName(details as Map<String, dynamic>);
       getmypack();
     }
   }
 
   getmypack() async {
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
-    var request = http.MultipartRequest("POST", url);
-    request.fields['cId'] = cid!;
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
-    if (data != "[]") {
-      var details = jsonDecode(data);
-      if (details[0]["pStatus"] == "1") {
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cId'] = MyGalleryBookRepository.getCId();
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
+    if (data != '[]') {
+      final details = jsonDecode(data);
+      if (details[0]['pStatus'] == '1') {
         Get.toNamed(Routes.HOME);
       } else {
         Get.toNamed(Routes.SUBSCRIPTION);
@@ -59,17 +65,16 @@ class OtpVerificationController extends GetxController {
 
   resendotp(BuildContext context) async {
     AppUtils.poPup(context);
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.getotp);
-    var request = new http.MultipartRequest("POST", url);
-    request.fields['cPhone'] = cPhone!;
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
-    if (data != null) {
-      Get.back();
-      AppUtils.flushBarshow("OTP Sent to $cPhone", context, AppColors.green);
-    } else {
-      Get.back();
-      AppUtils.flushBarshow("Something Went Wrong", context, AppColors.red);
-    }
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.getotp);
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cPhone'] = MyGalleryBookRepository.getCPhone();
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
+    Get.back();
+    AppUtils.flushbarShow(
+      AppColors.green,
+      'OTP Sent to ${MyGalleryBookRepository.getCPhone()}',
+      context,
+    );
   }
 }

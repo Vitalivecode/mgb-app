@@ -1,66 +1,66 @@
-import 'package:get/get.dart';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
 import 'package:mygallerybook/app/modules/home/widgets/order_card.dart';
+import 'package:mygallerybook/app/routes/app_pages.dart';
 import 'package:mygallerybook/core/app_colors.dart';
 import 'package:mygallerybook/core/app_urls.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-class BusinessController extends GetxController {
-  String? cid;
-  String? date;
-  String? expireDate;
-  List orders = [];
-  Future? getMetaData;
-  Future? list;
-  var packs;
-  late DateTime current;
+import 'package:sp_util/sp_util.dart';
 
-  days() {
+class BusinessController extends GetxController {
+  final date = Rx<String?>(null);
+  final expireDate = Rx<String?>(null);
+  final orders = <dynamic>[].obs;
+  dynamic packs;
+  final current = DateTime.now().obs;
+
+  void days() {
     final date1 = DateTime.now();
-    final date2 = DateTime.parse("$expireDate");
+    final date2 = DateTime.parse('${expireDate.value}');
     final differenceInDays = date2.difference(date1).inDays;
-    date = ((differenceInDays / 30).round()).toString();
+    date.value = (differenceInDays / 30).round().toString();
   }
 
-  myOrders() async {
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.myOrder);
-    var request = http.MultipartRequest("POST", url);
-    request.fields['cId'] = cid!;
-    var response = await request.send();
-    var data = await response.stream.transform(utf8.decoder).join();
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setBool("inital", false);
-    if (data != "[]") {
+  Future<void> myOrders() async {
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.myOrder);
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cId'] = MyGalleryBookRepository.getCId();
+    final response = await request.send();
+    final data = await response.stream.transform(utf8.decoder).join();
+    await SpUtil.putBool('inital', false);
+    if (data != '[]') {
       try {
-        orders = jsonDecode(data);
+        orders
+          ..clear()
+          ..addAll(jsonDecode(data) as List);
         log(orders.toString());
       } catch (e, s) {
         debugPrintStack(stackTrace: s);
         debugPrint(e.toString());
-        orders = ["Error"];
       }
     } else {
-      log(data.toString());
-      orders = [];
+      orders.clear();
     }
   }
 
-  Future<List?> myPack() async {
-    var url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
-    var request = http.MultipartRequest("POST", url);
-    request.fields['cId'] = cid!;
-    var response = await request.send();
-    String data1 = await response.stream.transform(utf8.decoder).join();
-    var data = jsonDecode(data1);
-    if (data != "[]") {
+  Future<List<dynamic>?> myPack() async {
+    final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
+    final request = http.MultipartRequest('POST', url);
+    request.fields['cId'] = MyGalleryBookRepository.getCId();
+    final response = await request.send();
+    final data1 = await response.stream.transform(utf8.decoder).join();
+    final data = jsonDecode(data1);
+    if (data != '[]') {
       try {
         packs = data;
-        expireDate = packs[packs.length - 1]["sEndDate"].split(' ')[0];
+        expireDate.value =
+            packs[packs.length - 1]['sEndDate'].split(' ')[0].toString();
         days();
       } catch (e, s) {
         debugPrintStack(stackTrace: s);
@@ -69,14 +69,15 @@ class BusinessController extends GetxController {
     } else {
       packs = null;
     }
+    return null;
   }
 
   Future<bool> onBackPressed() async {
-    DateTime now = DateTime.now();
-    if (current == null || now.difference(current) > Duration(seconds: 3)) {
-      current = now;
-      Fluttertoast.showToast(
-        msg: "Press Again to Exit",
+    final now = DateTime.now();
+    if (now.difference(current.value) > const Duration(seconds: 3)) {
+      current.value = now;
+      await Fluttertoast.showToast(
+        msg: 'Press Again to Exit',
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: AppColors.black,
         fontSize: 14,
@@ -84,37 +85,44 @@ class BusinessController extends GetxController {
       );
       return Future.value(false);
     } else {
-      Fluttertoast.cancel();
-      SystemNavigator.pop();
+      await Fluttertoast.cancel();
+      await SystemNavigator.pop();
       return true;
     }
   }
 
-  orderAlbums() {
-    List<Widget> listOrdersUI = [];
-    print(orders);
+  List<Widget> orderAlbums() {
+    final listOrdersUI = <Widget>[];
+    debugPrint(orders.toString());
     for (var index = 0;
-    index < (orders.length > 2 ? 2 : orders.length);
-    index++) {
+        index < (orders.length > 2 ? 2 : orders.length);
+        index++) {
       listOrdersUI.add(
         OrderCard(
-          album: orders[index]["albumId"],
-          color: orders[index]["oStatus"] == "1"
+          album: orders[index]['albumId']?.toString() ?? '',
+          color: orders[index]['oStatus'] == '1'
               ? AppColors.color1
-              : orders[index]["oStatus"] == "5"
-              ? AppColors.green
-              : AppColors.color3,
-          status: orders[index]["oStatus"] == "1"
-              ? "Ordered"
-              : orders[index]["oStatus"] == "2"
-              ? "Received"
-              : orders[index]["oStatus"] == "3"
-              ? "Printed"
-              : orders[index]["oStatus"] == "4"
-              ? "Dispatched"
-              : "Delivered",
-          timages: orders[index]["NofoImages"],
+              : orders[index]['oStatus'] == '5'
+                  ? AppColors.green
+                  : AppColors.color3,
+          status: orders[index]['oStatus'] == '1'
+              ? 'Ordered'
+              : orders[index]['oStatus'] == '2'
+                  ? 'Received'
+                  : orders[index]['oStatus'] == '3'
+                      ? 'Printed'
+                      : orders[index]['oStatus'] == '4'
+                          ? 'Dispatched'
+                          : 'Delivered',
+          timages: orders[index]['NofoImages'] as int,
           onPress: () {
+            Get.toNamed(Routes.ORDER_DETAILS, arguments: {
+              "aid": orders[index]["aId"],
+              "albumId": orders[index]["albumId"],
+              "cid": MyGalleryBookRepository.getCId,
+              "feedback": orders[index]["feedback"],
+              "pid": orders[index]["pId"],
+            });
             //   Navigator.push(
             //       context,
             //       MaterialPageRoute(
@@ -127,21 +135,29 @@ class BusinessController extends GetxController {
             //           )));
           },
 
-          image1: orders[index]["UploadImages"].asMap().containsKey(0)
-              ? orders[index]["UploadImages"][0]
-              : "",
+          image1: (orders[index]['UploadImages'] as Map).containsKey(0)
+              ? orders[index]['UploadImages'][0].toString()
+              : '',
           //image1: orders[index]["UploadImages"][0],
-          image2: orders[index]["UploadImages"].asMap().containsKey(1)
-              ? orders[index]["UploadImages"][1]
-              : "",
+          image2: (orders[index]['UploadImages'] as Map).containsKey(1)
+              ? orders[index]['UploadImages'][1].toString()
+              : '',
           // image2: orders[index]["UploadImages"][1],
-          image3: orders[index]["UploadImages"].length > 2
-              ? orders[index]["UploadImages"][2]
+          image3: (orders[index]['UploadImages'] as List).length > 2
+              ? orders[index]['UploadImages'][2].toString()
               : null,
         ),
       );
     }
 
     return listOrdersUI;
+  }
+
+  @override
+  void onInit() {
+    myPack();
+    myOrders();
+    log("These are the packs data $packs");
+    super.onInit();
   }
 }

@@ -1,5 +1,6 @@
-class AppUrls{
+class AppUrls {
   AppUrls._();
+
   static const productionHost = 'http://mygallerybook.com';
 
   static const profileimages = '/uploads/profiles';
@@ -40,5 +41,6 @@ class AppUrls{
 
   static const orderTracking = '/order/tracking';
 
-  static const courierUrl = 'https://track.aftership.com/trackings?courier=dtdc&tracking-numbers=';
+  static const courierUrl =
+      'https://track.aftership.com/trackings?courier=dtdc&tracking-numbers=';
 }

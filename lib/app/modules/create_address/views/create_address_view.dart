@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import 'package:mygallerybook/app/modules/create_address/controllers/create_address_controller.dart';
 import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
 import 'package:mygallerybook/core/app_colors.dart';
@@ -9,10 +7,11 @@ import 'package:mygallerybook/core/reusable_widgets/my_textformfield.dart';
 
 class CreateAddressView extends GetView<CreateAddressController> {
   const CreateAddressView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
@@ -27,21 +26,23 @@ class CreateAddressView extends GetView<CreateAddressController> {
                 Transform.translate(
                   offset: Offset(-width * .4, -height * .005),
                   child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      }),
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
                 ),
                 Center(
                   child: Text(
-                    "Add Address",
+                    'Add Address',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: .5),
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: .5,
+                        ),
                   ),
                 ),
               ],
@@ -56,8 +57,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                   children: <Widget>[
                     const SizedBox(height: 30),
                     MyTextFormField(
-                      hintText: "Door No. / House No.",
-                      lable: "Enter House No.",
+                      hintText: 'Door No. / House No.',
+                      label: 'Enter House No.',
                       icon: const Icon(Icons.home),
                       validator: (String? value) {
                         if (value!.isEmpty) {
@@ -70,8 +71,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       },
                     ),
                     MyTextFormField(
-                      hintText: "Street",
-                      lable: "Enter Street",
+                      hintText: 'Street',
+                      label: 'Enter Street',
                       icon: const Icon(Icons.local_convenience_store),
                       validator: (String? value) {
                         if (value!.isEmpty) {
@@ -84,8 +85,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       },
                     ),
                     MyTextFormField(
-                      hintText: "LandMark",
-                      lable: "Enter LandMark",
+                      hintText: 'LandMark',
+                      label: 'Enter LandMark',
                       icon: const Icon(Icons.business),
                       validator: (String? value) {
                         if (value!.isEmpty) {
@@ -98,8 +99,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       },
                     ),
                     MyTextFormField(
-                      hintText: "City",
-                      lable: "Enter City Name",
+                      hintText: 'City',
+                      label: 'Enter City Name',
                       icon: const Icon(Icons.location_city),
                       validator: (String? value) {
                         if (value!.isEmpty) {
@@ -112,8 +113,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       },
                     ),
                     MyTextFormField(
-                      hintText: "PinCode",
-                      lable: "Enter PinCode",
+                      hintText: 'PinCode',
+                      label: 'Enter PinCode',
                       isNumber: true,
                       number: 6,
                       icon: const Icon(Icons.fiber_pin),
@@ -135,7 +136,7 @@ class CreateAddressView extends GetView<CreateAddressController> {
                           controller.createAddress();
                         }
                       },
-                      btntext: "Continue",
+                      btntext: 'Continue',
                       color: AppColors.blue,
                       textcolor: AppColors.white,
                     ),
@@ -144,7 +145,7 @@ class CreateAddressView extends GetView<CreateAddressController> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

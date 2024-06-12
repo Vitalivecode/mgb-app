@@ -1,3 +1,1 @@
-class AppDateFormatters{
-
-}
+class AppDateFormatters {}

@@ -4,32 +4,21 @@ import 'package:mygallerybook/core/app_colors.dart';
 
 class AppTheme {
   static ThemeData getMyGalleryBookTheme() {
+    final nunitoTheme = GoogleFonts.nunitoTextTheme();
+    final latoTheme = GoogleFonts.latoTextTheme();
+
     return ThemeData.from(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.blue,
-          // brightness: Brightness.dark,
-        ).copyWith(
-          primary: AppColors.blue,
-        ),
-        textTheme: TextTheme(
-            bodyLarge: GoogleFonts.nunito(
-                textStyle: const TextStyle(
-              inherit: true,
-              fontSize: 23,
-              fontWeight: FontWeight.w800,
-            )),
-            bodyMedium: GoogleFonts.nunito(
-              textStyle: const TextStyle(
-                inherit: true,
-                fontSize: 20,
-              ),
-            ),
-            bodySmall: GoogleFonts.lato(
-                textStyle: const TextStyle(
-                    inherit: true,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    fontStyle: FontStyle.italic))));
+      useMaterial3: false,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.darkBlue,
+      ).copyWith(
+        primary: AppColors.darkBlue,
+      ),
+      textTheme: nunitoTheme.copyWith(
+        bodySmall: latoTheme.bodySmall,
+        bodyLarge: latoTheme.bodyLarge,
+        bodyMedium: latoTheme.bodyMedium,
+      ),
+    );
   }
 }

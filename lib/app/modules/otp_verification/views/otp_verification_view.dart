@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
+import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
 import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
 import 'package:mygallerybook/app/modules/otp_verification/controllers/otp_verification_controller.dart';
 import 'package:mygallerybook/core/app_assets.dart';
@@ -28,9 +29,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 Transform.translate(
                   offset: Offset(-width * .4, 0),
                   child: IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: Get.back,
                     icon: const Icon(
                       Icons.arrow_back_ios,
                       color: Colors.white,
@@ -44,11 +43,13 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text('My Gallery Book',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(fontSize: 26, color: AppColors.white)),
+                Text(
+                  'My Gallery Book',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 26, color: AppColors.white),
+                ),
               ],
             ),
           ),
@@ -62,24 +63,24 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "OTP Sent to",
+                        'OTP Sent to ',
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge
                             ?.copyWith(fontSize: 16, color: AppColors.black),
                       ),
                       Text(
-                        controller.cPhone ?? "",
+                        MyGalleryBookRepository.getCPhone() ?? '',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontSize: 16,
-                            color: AppColors.blue,
-                            decoration: TextDecoration.underline),
+                              fontSize: 16,
+                              color: AppColors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   OtpTextField(
-                    numberOfFields: 4,
                     borderColor: Colors.grey,
                     showFieldAsBox: true,
                     onCodeChanged: (String code) {},
@@ -90,14 +91,17 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   const SizedBox(height: 30),
                   MyButton(
                     onPress: () {
-                      if (controller.otp == "") {
-                        AppUtils.flushBarshow(
-                            "Please Enter OTP", context, AppColors.red);
+                      if (controller.otp == '') {
+                        AppUtils.flushbarShow(
+                          AppColors.red,
+                          'Please Enter OTP',
+                          context,
+                        );
                       } else {
                         controller.verify(context);
                       }
                     },
-                    btntext: "Verify OTP",
+                    btntext: 'Verify OTP',
                     color: AppColors.blue,
                     textcolor: AppColors.white,
                   ),
@@ -115,14 +119,13 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                       GestureDetector(
                         onTap: () async => await controller.resendotp(context),
                         child: Text(
-                          "Resend",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                  fontSize: 16,
-                                  color: AppColors.red,
-                                  decoration: TextDecoration.underline),
+                          'Resend',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontSize: 16,
+                                    color: AppColors.red,
+                                    decoration: TextDecoration.underline,
+                                  ),
                         ),
                       ),
                     ],
@@ -130,7 +133,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

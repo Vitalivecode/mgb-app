@@ -11,15 +11,16 @@ class SettingsController extends GetxController {
   var name;
 
   getName() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    var cid = await MyGalleryBookRepository.getCId();
+    final pref = await SharedPreferences.getInstance();
+    final cid = await MyGalleryBookRepository.getCId();
     print(cid);
-      name = "${pref.getString("firstName")} ${pref.getString("lastName")!}";
+    name = "${pref.getString("firstName")} ${pref.getString("lastName")!}";
   }
+
   logOut() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("cid");
-    prefs.remove("eMail");
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('cid');
+    prefs.remove('eMail');
     prefs.remove('cPhone');
     Get.offAndToNamed(Routes.LOGIN);
     // Navigator.pushAndRemoveUntil(
@@ -28,17 +29,20 @@ class SettingsController extends GetxController {
     //   ModalRoute.withName('/'),
     // );
   }
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   String? cid;
 
   DateTime? current;
+
   Future<bool> onBackPressed() async {
-    DateTime now = DateTime.now();
-    if (current == null || now.difference(current!) > const Duration(seconds: 3)) {
+    final now = DateTime.now();
+    if (current == null ||
+        now.difference(current!) > const Duration(seconds: 3)) {
       current = now;
       Fluttertoast.showToast(
-        msg: "Press Again to Exit",
+        msg: 'Press Again to Exit',
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: AppColors.black,
         fontSize: 14,
