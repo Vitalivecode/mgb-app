@@ -9,6 +9,7 @@ import 'package:mygallerybook/app/modules/create_profile/views/create_profile_vi
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
 import 'package:mygallerybook/core/app_colors.dart';
 import 'package:mygallerybook/core/app_urls.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileController extends GetxController {
   Future? getMetaDataFuture;
@@ -27,6 +28,13 @@ class ProfileController extends GetxController {
     request.fields['cId'] = cid!;
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
+
+    //check for null response before decoding
+    if (data.isEmpty) {
+      details = null;
+      print("there is no data for the get profile");
+      return;
+    }
     details = jsonDecode(data);
     MyGalleryBookRepository.setUserName(details as Map<String, String>);
   }
@@ -40,6 +48,7 @@ class ProfileController extends GetxController {
     if (data != '[]') {
       address = jsonDecode(data);
     } else {
+      print("there is no data for the getAddress");
       details = null;
     }
   }
@@ -111,6 +120,15 @@ class ProfileController extends GetxController {
           ),
         );
       }
+      var response = await request.send();
+      var data = await response.stream.transform(utf8.decoder).join();
+      print(data);
+      if (data.isNotEmpty) {
+        details = jsonDecode(data);
+      }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("pId", details["pId"]);
+      prefs.setString("eMail", details['cEmail']);
     }
   }
 

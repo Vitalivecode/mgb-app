@@ -17,154 +17,158 @@ class BusinessView extends GetView<BusinessController> {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
-        child: controller.packs == null
+        child: controller.packs.value == null
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView(
-                children: [
-                  Wrap(
-                    children: [
-                      SizedBox(
-                        width: width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: height * .02,
-                            ),
-                            Text(
-                              'My Gallerybook 2.0',
-                              style: textTheme.bodyLarge!
-                                  .copyWith(fontSize: width * .07),
-                            ),
-                            Text(
-                              'Things End but Memories Last Forever',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(fontSize: width * .04),
-                            ),
-                            HomeCard(
-                              description:
-                                  "${int.parse('${controller.date}') > 1 ? '${controller.date}' " Months" : '${controller.date}' " Month"} and ${controller.packs[controller.packs.length - 1]["sRemainAlbums"] == "1" ? controller.packs[controller.packs.length - 1]["sRemainAlbums"] + " Photobook" : controller.packs[controller.packs.length - 1]["sRemainAlbums"] + " Photobooks"} left",
-                              color: AppColors.blue,
-                              expireDate: '${controller.expireDate}',
-                              onPress: () {
-                                Get.toNamed(Routes.TEMPLATES);
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
+            : Obx(
+                () => ListView(
+                  children: [
+                    Wrap(
+                      children: [
+                        SizedBox(
+                          width: width,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: height * .02,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    'My Recent Orders',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          fontSize: width * .055,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Get.toNamed(Routes.ALL_ORDERS);
-                                    },
-                                    child: Text(
-                                      'All Orders',
+                              Text(
+                                'My Gallerybook 2.0',
+                                style: textTheme.bodyLarge!
+                                    .copyWith(fontSize: width * .07),
+                              ),
+                              Text(
+                                'Things End but Memories Last Forever',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: width * .04),
+                              ),
+                              HomeCard(
+                                description:
+                                    "${int.parse('${controller.date}') > 1 ? '${controller.date}' " Months" : '${controller.date}' " Month"} and ${controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] == "1" ? controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] + " Photobook" : controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] + " Photobooks"} left",
+                                color: AppColors.blue,
+                                expireDate: '${controller.expireDate}',
+                                onPress: () {
+                                  Get.toNamed(Routes.TEMPLATES);
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      'My Recent Orders',
+                                      overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall
+                                          .bodyMedium
                                           ?.copyWith(
-                                            fontSize: width * .04,
+                                            fontSize: width * .055,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          if (controller.orders.isEmpty)
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 25,
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Image.asset(
-                                      'assets/empty.png',
-                                      width: width * .4,
-                                    ),
-                                    Text(
-                                      'No Photobooks Ordered Yet',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall?.copyWith(
-                                            fontSize: width * .04,
-                                            color: AppColors.color1.withOpacity(
-                                              .5,
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.toNamed(Routes.ALL_ORDERS);
+                                      },
+                                      child: Text(
+                                        'All Orders',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              fontSize: width * .04,
                                             ),
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: height * .02,
-                                    ),
-                                    MyButton(
-                                      btntext: 'Start Creating',
-                                      color: AppColors.blue,
-                                      textcolor: AppColors.white,
-                                      onPress: controller.packs[
-                                                  controller.packs.length -
-                                                      1]['sRemainAlbums'] ==
-                                              '0'
-                                          ? () {
-                                              Get.toNamed(
-                                                Routes.SUBSCRIPTION,
-                                              );
-                                            }
-                                          : () {
-                                              Feedback.forTap(
-                                                context,
-                                              );
-                                              HapticFeedback.lightImpact();
-                                              Get.toNamed(Routes.IMAGEPICKER);
-                                              // print(
-                                              //     controller.packs.toString() +
-                                              //         "I am printing");
-                                            },
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            )
-                          else
-                            Column(
-                              children: controller.orders[0] == 'Error'
-                                  ? [
-                                      packsNotFound(
-                                        height,
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            if (controller.orders.isEmpty)
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 25,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.asset(
+                                        'assets/empty.png',
+                                        width: width * .4,
                                       ),
-                                    ]
-                                  : controller.orderAlbums(),
-                            ),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
+                                      Text(
+                                        'No Photobooks Ordered Yet',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall?.copyWith(
+                                              fontSize: width * .04,
+                                              color:
+                                                  AppColors.color1.withOpacity(
+                                                .5,
+                                              ),
+                                            ),
+                                      ),
+                                      SizedBox(
+                                        height: height * .02,
+                                      ),
+                                      MyButton(
+                                        btntext: 'Start Creating',
+                                        color: AppColors.blue,
+                                        textcolor: AppColors.white,
+                                        onPress: controller.packs.value[
+                                                    controller.packs.value
+                                                            .length -
+                                                        1]['sRemainAlbums'] ==
+                                                '0'
+                                            ? () {
+                                                Get.toNamed(
+                                                  Routes.SUBSCRIPTION,
+                                                );
+                                              }
+                                            : () {
+                                                Feedback.forTap(
+                                                  context,
+                                                );
+                                                HapticFeedback.lightImpact();
+                                                Get.toNamed(Routes.IMAGEPICKER);
+                                                // print(
+                                                //     controller.packs.toString() +
+                                                //         "I am printing");
+                                              },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            else
+                              Column(
+                                children: controller.orders[0] == 'Error'
+                                    ? [
+                                        packsNotFound(
+                                          height,
+                                        ),
+                                      ]
+                                    : controller.orderAlbums(),
+                              ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
       ),
     );

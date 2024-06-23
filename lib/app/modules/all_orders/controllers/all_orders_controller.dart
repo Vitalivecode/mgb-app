@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:mygallerybook/app/modules/all_orders/providers/orders_provider.dart';
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
@@ -9,18 +11,22 @@ class AllOrdersController extends GetxController {
   final orders = <Map>[].obs;
 
   Future<void> getData() async {
-    if (loading.isFalse) {
+    print("getDataCalled");
+    if (loading.isTrue) {
+      print("loading isTrue");
       error.value = null;
       loading.value = true;
       try {
         final result = await OrdersProvider.getOrders(
           MyGalleryBookRepository.getCId(),
         );
+        log("${result}this is inside the getData");
         orders
           ..clear()
-          ..addAll(result);
+          ..addAll(result as Iterable<Map>);
         if (orders.isNotEmpty) {
           oStatus.value = orders[0]['oStatus']?.toString();
+          log("${orders}this is orders data");
         }
       } catch (e) {
         error.value = e.toString();
@@ -48,7 +54,9 @@ class AllOrdersController extends GetxController {
 
   @override
   void onInit() {
+    print("onInitCalled");
     getData();
+    log(orders.toString());
     super.onInit();
   }
 }

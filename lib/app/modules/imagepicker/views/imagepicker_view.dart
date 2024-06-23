@@ -12,7 +12,8 @@ class ImagepickerView extends GetView<ImagepickerController> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop(true);
+        // Navigator.of(context).pop(true);
+        Get.back();
         return true;
       },
       child: Scaffold(
@@ -24,7 +25,8 @@ class ImagepickerView extends GetView<ImagepickerController> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.of(context).pop(true);
+              // Navigator.of(context).pop(true);
+              Get.back();
             },
           ),
         ),
@@ -64,13 +66,14 @@ class ImagepickerView extends GetView<ImagepickerController> {
                             MyButton(
                               onPress: controller.fileImageArray.isNotEmpty
                                   ? () {
+                                      print("order album clicked");
                                       // showConfirmationAlert(context);
                                       AppUtils.showConfirmationAlert(context);
                                     }
                                   : () {
                                       AppUtils.flushbarShow(
                                         AppColors.red,
-                                        'Please Select Min. 1 Image, Max. of 25 Images alloweda at a time',
+                                        'Please Select Min. 1 Image, Max. of 25 Images allowed at a time',
                                         context,
                                       );
                                     },
@@ -124,7 +127,7 @@ class ImagepickerView extends GetView<ImagepickerController> {
                             ),
                           ),
                         ),
-                        if (controller.isLoading)
+                        if (controller.isLoading.value)
                           const CircularProgressIndicator()
                         else
                           Wrap(children: controller.imagesListUI),

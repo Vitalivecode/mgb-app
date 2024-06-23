@@ -12,21 +12,17 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBody: true,
       body: Obx(
-            () =>
-            IndexedStack(
-              index: controller.currentIndex.value,
-              children: const [
-                BusinessView(),
-                SettingsView(),
-              ],
-            ),
+        () => IndexedStack(
+          index: controller.currentIndex.value,
+          children: const [
+            BusinessView(),
+            SettingsView(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
@@ -35,15 +31,15 @@ class HomeView extends GetView<HomeController> {
         splashColor: AppColors.darkBlue,
         onPressed: controller.pack == '0'
             ? () {
-          Feedback.forTap(context);
-          HapticFeedback.mediumImpact();
-          Get.toNamed(Routes.SUBSCRIPTION);
-        }
+                Feedback.forTap(context);
+                HapticFeedback.mediumImpact();
+                Get.toNamed(Routes.SUBSCRIPTION);
+              }
             : () async {
-          Feedback.forTap(context);
-          HapticFeedback.lightImpact();
-          Get.toNamed(Routes.IMAGEPICKER);
-        },
+                Feedback.forTap(context);
+                HapticFeedback.lightImpact();
+                Get.toNamed(Routes.IMAGEPICKER);
+              },
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -111,33 +107,28 @@ class HomeView extends GetView<HomeController> {
           color: AppColors.darkBlue,
           clipBehavior: Clip.antiAlias,
           child: Obx(
-                () =>
-                BottomNavigationBar(
-                  iconSize: 28,
-                  elevation: 0,
-                  selectedFontSize: 0,
-                  unselectedFontSize: 0,
-                  selectedItemColor: AppColors.white,
-                  unselectedItemColor: Colors.white38,
-                  backgroundColor: Colors.transparent,
-                  currentIndex: controller.currentIndex.value,
-                  onTap: (value) =>
+            () => BottomNavigationBar(
+              iconSize: 28,
+              elevation: 0,
+              selectedFontSize: 0,
+              unselectedFontSize: 0,
+              selectedItemColor: AppColors.white,
+              unselectedItemColor: Colors.white38,
+              backgroundColor: Colors.transparent,
+              currentIndex: controller.currentIndex.value,
+              onTap: (value) =>
                   controller.currentIndex.value = value.clamp(0, 1),
-                  items: const [
-                    BottomNavigationBarItem(
-                      label: 'Home',
-                      icon: Icon(Icons.business),
-                    ),
-                    BottomNavigationBarItem(
-                      label: '',
-                      icon: LimitedBox(),
-                    ),
-                    BottomNavigationBarItem(
-                      label: 'work',
-                      icon: Icon(Icons.work),
-                    ),
-                  ],
+              items: const [
+                BottomNavigationBarItem(
+                  label: 'business',
+                  icon: Icon(Icons.business),
                 ),
+                BottomNavigationBarItem(
+                  label: 'work',
+                  icon: Icon(Icons.work),
+                ),
+              ],
+            ),
           ),
         ),
       ),

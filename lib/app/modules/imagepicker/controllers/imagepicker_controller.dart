@@ -10,11 +10,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:system_info/system_info.dart';
 
 class ImagepickerController extends GetxController {
-  List<File> images = [];
-  List<File> fileImageArray = [];
-  List<Widget> imagesListUI = [];
-  bool isLoading = false;
-  late int ram;
+  final RxList<File> images = RxList<File>([]);
+  final RxList<File> fileImageArray = RxList<File>([]);
+  final RxList<Widget> imagesListUI = RxList<Widget>([]);
+  RxBool isLoading = false.obs;
+  var ram;
 
   showDeviceLowSpecAlert() async {
     ram = SysInfo.getTotalPhysicalMemory();
@@ -114,8 +114,8 @@ class ImagepickerController extends GetxController {
           context as BuildContext,
         );
       }
-      images = fileImageArray;
-      fileImageArray = fileImageArray;
+      images.value = fileImageArray;
+      fileImageArray.value = fileImageArray;
       buildGridView(context);
       return fileImageArray;
     } on Exception catch (e) {
@@ -125,7 +125,7 @@ class ImagepickerController extends GetxController {
   }
 
   buildGridView(context) {
-    imagesListUI = [];
+    imagesListUI.value = [];
     print('inside the fileupload');
     if (imagesListUI.length <= 20) {
       for (var i = 0; i < images.length; i++) {
@@ -182,10 +182,16 @@ class ImagepickerController extends GetxController {
           ),
         );
       }
-      imagesListUI = imagesListUI;
+      imagesListUI.value = imagesListUI;
       // setState(() {
       //   imagesListUI = imagesListUI;
       // });
     }
+  }
+
+  @override
+  onInit() {
+    showDeviceLowSpecAlert();
+    super.onInit();
   }
 }

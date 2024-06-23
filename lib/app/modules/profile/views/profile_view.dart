@@ -228,7 +228,7 @@ class ProfileView extends GetView<ProfileController> {
                                               .details['cEmail'] as String,
                                           validator: (value) {
                                             if (value == '') {
-                                              return 'Pleae enter the email';
+                                              return 'Please enter the email';
                                             }
                                             return null;
                                           },

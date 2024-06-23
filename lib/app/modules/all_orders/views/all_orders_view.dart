@@ -25,7 +25,8 @@ class AllOrdersView extends GetView<AllOrdersController> {
                 color: Colors.white,
               ),
               onPressed: () {
-                Navigator.of(context).pop(true);
+                // Navigator.of(context).pop(true);
+                Get.back();
               },
             ),
             title: Text(
@@ -41,87 +42,77 @@ class AllOrdersView extends GetView<AllOrdersController> {
             () => Column(
               children: <Widget>[
                 Expanded(
-                  child: controller.loading.isTrue
-                      ? const Center(child: CircularProgressIndicator())
-                      : controller.orders == null
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset('assets/empty.png'),
-                                  Text(
-                                    'No Albums Ordered Yet',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          fontSize: 18,
-                                          color:
-                                              AppColors.color1.withOpacity(.5),
-                                        ),
-                                  ),
-                                ],
+                  child: controller.orders.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.asset('assets/empty.png'),
+                              Text(
+                                'No Albums Ordered Yet',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      fontSize: 18,
+                                      color: AppColors.color1.withOpacity(.5),
+                                    ),
                               ),
-                            )
-                          : ListView.builder(
-                              itemCount: controller.orders.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final status =
-                                    controller.orders[index]['oStatus'];
-                                return OrderCard(
-                                  album: controller.orders[index]['albumId']
-                                      .toString(),
-                                  color: controller.orders[index]['oStatus'] ==
-                                          '1'
-                                      ? AppColors.color1
-                                      : controller.orders[index]['oStatus'] ==
-                                              '5'
-                                          ? AppColors.green
-                                          : AppColors.color3,
-                                  status:
-                                      controller.getStatus(status.toString()),
-                                  timages: controller.orders[index]
-                                      ['NofoImages'] as int,
-                                  onPress: () {
-                                    Get.toNamed(
-                                      Routes.ORDER_DETAILS,
-                                      arguments: {
-                                        'aid': controller.orders[index]['aId'],
-                                        'pid': controller.orders[index]['pId'],
-                                        'albumId': controller.orders[index]
-                                            ['albumId'],
-                                        // 'cid': controller.cid ?? '',
-                                        'cid': MyGalleryBookRepository.getCId(),
-                                        'feedback': controller.orders[index]
-                                                ['feedback'] ??
-                                            '',
-                                      },
-                                    );
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: controller.orders.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            // log("My orders is calling");
+                            final status = controller.orders[index]['oStatus'];
+                            return OrderCard(
+                              album: controller.orders[index]['albumId']
+                                  .toString(),
+                              color: controller.orders[index]['oStatus'] == '1'
+                                  ? AppColors.color1
+                                  : controller.orders[index]['oStatus'] == '5'
+                                      ? AppColors.green
+                                      : AppColors.color3,
+                              status: controller.getStatus(status.toString()),
+                              timages:
+                                  controller.orders[index]['NofoImages'] as int,
+                              onPress: () {
+                                Get.toNamed(
+                                  Routes.ORDER_DETAILS,
+                                  arguments: {
+                                    'aid': controller.orders[index]['aId'],
+                                    'pid': controller.orders[index]['pId'],
+                                    'albumId': controller.orders[index]
+                                        ['albumId'],
+                                    // 'cid': controller.cid ?? '',
+                                    'cid': MyGalleryBookRepository.getCId(),
+                                    'feedback': controller.orders[index]
+                                            ['feedback'] ??
+                                        '',
                                   },
-                                  image1: controller.orders[index]
-                                          ['UploadImages'][0]
-                                      .toString(),
-                                  image2: controller.orders[index]
-                                                  ['UploadImages']
-                                              .toString()
-                                              .length >
-                                          1
-                                      ? controller.orders[index]['UploadImages']
-                                              [1]
-                                          .toString()
-                                      : null,
-                                  image3: controller.orders[index]
-                                                  ['UploadImages']
-                                              .toString()
-                                              .length >
-                                          2
-                                      ? controller.orders[index]['UploadImages']
-                                              [2]
-                                          .toString()
-                                      : null,
                                 );
                               },
-                            ),
+                              image1: controller.orders[index]['UploadImages']
+                                      [0]
+                                  .toString(),
+                              image2: controller.orders[index]['UploadImages']
+                                          .toString()
+                                          .length >
+                                      1
+                                  ? controller.orders[index]['UploadImages'][1]
+                                      .toString()
+                                  : null,
+                              image3: controller.orders[index]['UploadImages']
+                                          .toString()
+                                          .length >
+                                      2
+                                  ? controller.orders[index]['UploadImages'][2]
+                                      .toString()
+                                  : null,
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

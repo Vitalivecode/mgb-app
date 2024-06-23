@@ -15,9 +15,12 @@ import 'package:sp_util/sp_util.dart';
 
 class BusinessController extends GetxController {
   final date = Rx<String?>(null);
+  final parsedDate = Rx<String?>(null);
   final expireDate = Rx<String?>(null);
   final orders = <dynamic>[].obs;
-  dynamic packs;
+  Rx<List<dynamic>> packs = Rx<List<dynamic>>([]);
+
+  // dynamic packs;
   final current = DateTime.now().obs;
 
   void days() {
@@ -50,24 +53,28 @@ class BusinessController extends GetxController {
   }
 
   Future<List<dynamic>?> myPack() async {
+    log("Hello!!");
     final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
     final request = http.MultipartRequest('POST', url);
     request.fields['cId'] = MyGalleryBookRepository.getCId();
     final response = await request.send();
     final data1 = await response.stream.transform(utf8.decoder).join();
     final data = jsonDecode(data1);
+    log("${data}we are printing the packs data");
     if (data != '[]') {
       try {
-        packs = data;
-        expireDate.value =
-            packs[packs.length - 1]['sEndDate'].split(' ')[0].toString();
+        packs.value = RxList.of(jsonDecode(data1)) as List<dynamic>;
+        log("${packs.value}this is for checking");
+        expireDate.value = packs.value[packs.value.length - 1]['sEndDate']
+            .split(' ')[0]
+            .toString();
         days();
       } catch (e, s) {
         debugPrintStack(stackTrace: s);
         debugPrint(e.toString());
       }
     } else {
-      packs = null;
+      packs.value = [];
     }
     return null;
   }
@@ -155,9 +162,10 @@ class BusinessController extends GetxController {
 
   @override
   void onInit() {
+    log("onInitCalled");
     myPack();
     myOrders();
-    log("These are the packs data $packs");
+    log("${packs.toString()} this is after call the myPack");
     super.onInit();
   }
 }
