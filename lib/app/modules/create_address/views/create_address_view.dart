@@ -31,7 +31,7 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       color: Colors.white,
                     ),
                     onPressed: () {
-                      Navigator.of(context).pop(true);
+                      Get.back();
                     },
                   ),
                 ),
@@ -133,7 +133,8 @@ class CreateAddressView extends GetView<CreateAddressController> {
                       onPress: () {
                         if (controller.formKey.currentState!.validate()) {
                           controller.formKey.currentState!.save();
-                          controller.createAddress();
+                          controller.createAddress(context);
+                          Get.back();
                         }
                       },
                       btntext: 'Continue',

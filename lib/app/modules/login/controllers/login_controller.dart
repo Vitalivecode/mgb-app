@@ -1,43 +1,39 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:mygallerybook/app/routes/app_pages.dart';
-import 'package:mygallerybook/core/app_colors.dart';
 import 'package:mygallerybook/core/app_urls.dart';
 import 'package:mygallerybook/core/app_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   final phoneNumber = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey();
 
-  check(BuildContext context) async {
-    if (phoneNumber.text == '') {
-      AppUtils.flushbarShow(
-        AppColors.red,
-        'Enter Phone Number',
-        context,
-      );
-    } else if (phoneNumber.text.length != 10) {
-      AppUtils.flushbarShow(
-        AppColors.red,
-        'Enter 10 Digit Valid Phone Number',
-        context,
-      );
+  String? validator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone Number shouldnot be empty';
+    } else if (value.length != 10) {
+      return 'Enter 10 digit Valid Phone Number';
     } else if (double.parse(phoneNumber.text[0]) < 6) {
-      AppUtils.flushbarShow(
-        AppColors.red,
-        'Enter Valid Phone Number',
-        context,
+      return 'Enter Valid Phone Number';
+    }
+    return null;
+  }
+
+  Future<void> check(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      Get.dialog(
+        AppUtils.loadingOverlay,
+        barrierDismissible: false,
       );
-    } else {
-      AppUtils.poPup(context);
-      sendotp();
+      sendOtp();
     }
   }
 
-  sendotp() async {
+  void sendOtp() async {
     final url = Uri.parse(AppUrls.productionHost + AppUrls.getotp);
     final request = http.MultipartRequest('POST', url);
     request.fields['cPhone'] = phoneNumber.text;
@@ -48,6 +44,22 @@ class LoginController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('cPhone', phoneNumber.text);
     prefs.setString('cid', data);
+    phoneNumber.clear();
+    Get.back();
     Get.toNamed(Routes.OTP_VERIFICATION);
+  }
+
+  @override
+  void onInit() {
+    phoneNumber.addListener(() {
+      formKey.currentState?.validate();
+    });
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    phoneNumber.dispose();
+    super.onClose();
   }
 }

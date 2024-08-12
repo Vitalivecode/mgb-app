@@ -12,14 +12,15 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentController extends GetxController {
-  int totalamount = 0;
-  Razorpay? _razorpay;
+  final totalAmount = 0.obs;
+  final btnText = 'Pay Securly'.obs;
+  final pay = false.obs;
+
   var selectedpack;
   var pack;
-  String? btntext = 'Pay Securly';
   Color? mycolor;
 
-  Type get context => BuildContext;
+  Razorpay? _razorpay;
 
   @override
   void dispose() {
@@ -44,11 +45,9 @@ class PaymentController extends GetxController {
     try {
       _razorpay?.open(options);
     } catch (e) {
-      // debugPrint(e);
+      debugPrint(e.toString());
     }
   }
-
-  bool pay = false;
 
   buySubscription(String payid) async {
     print(payid);
@@ -88,11 +87,11 @@ class PaymentController extends GetxController {
     AppUtils.flushbarShow(
       AppColors.green,
       'Success:${response.paymentId!}',
-      context as BuildContext,
+      Get.context!,
     );
     mycolor = AppColors.green;
-    btntext = 'Please Wait';
-    pay = true;
+    btnText.value = 'Please Wait';
+    pay.value = true;
     Future.delayed(const Duration(milliseconds: 5000), () {
       Get.toNamed(Routes.HOME);
     });
@@ -102,17 +101,17 @@ class PaymentController extends GetxController {
     AppUtils.flushbarShow(
       AppColors.red,
       'ERROR:${response.code}-${response.message!}',
-      context as BuildContext,
+      Get.context!,
     );
     mycolor = AppColors.red;
-    btntext = 'Try Again';
+    btnText.value = 'Try Again';
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     AppUtils.flushbarShow(
       AppColors.color3,
       'External Wallet${response.walletName!}',
-      context as BuildContext,
+      Get.context!,
     );
   }
 

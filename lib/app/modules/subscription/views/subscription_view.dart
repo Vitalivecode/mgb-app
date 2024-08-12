@@ -33,7 +33,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 padding: const EdgeInsets.only(
                   top: 20,
                 ),
-                child: buildCarouselSlider(),
+                child: Obx(() => buildCarouselSlider()),
               ),
               const SizedBox(height: 20),
               Center(
@@ -63,7 +63,6 @@ class SubscriptionView extends GetView<SubscriptionController> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const LinearProgressIndicator();
                   } else if (snapshot.connectionState == ConnectionState.done) {
-                    print('inside the done state');
                     return Padding(
                       padding: EdgeInsets.only(
                         left: width * 0.05,

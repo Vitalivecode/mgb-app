@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mygallerybook/app/modules/business/controllers/business_controller.dart';
 import 'package:mygallerybook/app/modules/business/widgets/home_card.dart';
+import 'package:mygallerybook/app/modules/business/widgets/packs_not_found.dart';
 import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
 import 'package:mygallerybook/app/routes/app_pages.dart';
 import 'package:mygallerybook/core/app_colors.dart';
@@ -17,12 +18,12 @@ class BusinessView extends GetView<BusinessController> {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
-        child: controller.packs.value == null
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Obx(
-                () => ListView(
+        child: Obx(
+          () => controller.packs.value.isEmpty
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView(
                   children: [
                     Wrap(
                       children: [
@@ -46,14 +47,98 @@ class BusinessView extends GetView<BusinessController> {
                                     .bodySmall
                                     ?.copyWith(fontSize: width * .04),
                               ),
-                              HomeCard(
-                                description:
-                                    "${int.parse('${controller.date}') > 1 ? '${controller.date}' " Months" : '${controller.date}' " Month"} and ${controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] == "1" ? controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] + " Photobook" : controller.packs.value[controller.packs.value.length - 1]["sRemainAlbums"] + " Photobooks"} left",
-                                color: AppColors.blue,
-                                expireDate: '${controller.expireDate}',
-                                onPress: () {
-                                  Get.toNamed(Routes.TEMPLATES);
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () {
+                                  if (controller.subscriptionEndedDate.value! <
+                                      0) {
+                                    Get.toNamed(Routes.SUBSCRIPTION);
+                                  }
                                 },
+                                child: Obx(
+                                  () => HomeCard(
+                                    description: (() {
+                                      if (controller.date.value != null &&
+                                              controller
+                                                  .date.value!.isNotEmpty ||
+                                          controller.day.value != null &&
+                                              controller
+                                                  .day.value!.isNotEmpty) {
+                                        if (controller.subscriptionEndedDate
+                                                    .value! >=
+                                                0 ||
+                                            controller.packs.value[controller
+                                                        .packs.value.length -
+                                                    1]["sRemainAlbums"] ==
+                                                "0") {
+                                          if (controller.day.value != null) {
+                                            String days = int.parse(
+                                                        '${controller.day}') >
+                                                    1
+                                                ? "${controller.day.value.toString()} days"
+                                                : "${controller.day.value.toString()} day";
+
+                                            String photobooks = controller
+                                                        .packs.value[controller
+                                                            .packs
+                                                            .value
+                                                            .length -
+                                                        1]["sRemainAlbums"] ==
+                                                    "1"
+                                                ? controller.packs
+                                                            .value[controller.packs.value.length - 1]
+                                                        ["sRemainAlbums"] +
+                                                    " Photobook"
+                                                : controller.packs
+                                                            .value[controller.packs.value.length - 1]
+                                                        ["sRemainAlbums"] +
+                                                    " Photobooks";
+                                            return "$days and $photobooks left";
+                                          } else {
+                                            String months = int.parse(
+                                                        '${controller.date}') >
+                                                    1
+                                                ? '${controller.date} Months'
+                                                : '${controller.date} Month';
+
+                                            String photobooks = controller
+                                                        .packs.value[controller
+                                                            .packs
+                                                            .value
+                                                            .length -
+                                                        1]["sRemainAlbums"] ==
+                                                    "1"
+                                                ? controller.packs
+                                                            .value[controller.packs.value.length - 1]
+                                                        ["sRemainAlbums"] +
+                                                    " Photobook"
+                                                : controller.packs
+                                                            .value[controller.packs.value.length - 1]
+                                                        ["sRemainAlbums"] +
+                                                    " Photobooks";
+                                            return "$months and $photobooks left";
+                                          }
+                                        } else {
+                                          if (controller.subscriptionEndedDate
+                                                  .value! <=
+                                              0) {
+                                            return "Subscription ended tap to renewal";
+                                          }
+                                          return "Photobooks Completed tap to renewal";
+                                        }
+                                      } else {
+                                        return "";
+                                      }
+                                    })(),
+                                    color: AppColors.blue,
+                                    expireDate: '${controller.expireDate}',
+                                    onPress: () {
+                                      // Get.toNamed(Routes.TEMPLATES);
+                                    },
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -124,30 +209,30 @@ class BusinessView extends GetView<BusinessController> {
                                       SizedBox(
                                         height: height * .02,
                                       ),
-                                      MyButton(
-                                        btntext: 'Start Creating',
-                                        color: AppColors.blue,
-                                        textcolor: AppColors.white,
-                                        onPress: controller.packs.value[
-                                                    controller.packs.value
-                                                            .length -
-                                                        1]['sRemainAlbums'] ==
-                                                '0'
-                                            ? () {
-                                                Get.toNamed(
-                                                  Routes.SUBSCRIPTION,
-                                                );
-                                              }
-                                            : () {
-                                                Feedback.forTap(
-                                                  context,
-                                                );
-                                                HapticFeedback.lightImpact();
-                                                Get.toNamed(Routes.IMAGEPICKER);
-                                                // print(
-                                                //     controller.packs.toString() +
-                                                //         "I am printing");
-                                              },
+                                      Obx(
+                                        () => MyButton(
+                                          btntext: 'Start Creating',
+                                          color: AppColors.blue,
+                                          textcolor: AppColors.white,
+                                          onPress: controller.packs.value[
+                                                      controller.packs.value
+                                                              .length -
+                                                          1]['sRemainAlbums'] ==
+                                                  0
+                                              ? () {
+                                                  Get.toNamed(
+                                                    Routes.SUBSCRIPTION,
+                                                  );
+                                                }
+                                              : () {
+                                                  Feedback.forTap(
+                                                    context,
+                                                  );
+                                                  HapticFeedback.lightImpact();
+                                                  Get.toNamed(
+                                                      Routes.IMAGEPICKER);
+                                                },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -157,9 +242,9 @@ class BusinessView extends GetView<BusinessController> {
                               Column(
                                 children: controller.orders[0] == 'Error'
                                     ? [
-                                        packsNotFound(
-                                          height,
-                                        ),
+                                        PacksNotFound(
+                                            height: height,
+                                            color: AppColors.red)
                                       ]
                                     : controller.orderAlbums(),
                               ),
@@ -169,35 +254,8 @@ class BusinessView extends GetView<BusinessController> {
                     )
                   ],
                 ),
-              ),
+        ),
       ),
     );
   }
-
-  Container packsNotFound(height) => Container(
-        alignment: Alignment.center,
-        height: height * 0.5,
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error,
-              size: 80,
-              color: AppColors.red,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Failed To Load the Photobooks Data',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      );
 }

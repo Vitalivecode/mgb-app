@@ -1,37 +1,46 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
+import 'package:mygallerybook/app/modules/business/controllers/business_controller.dart';
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
-import 'package:mygallerybook/app/modules/order_album/widgets/address_card.dart';
 import 'package:mygallerybook/app/routes/app_pages.dart';
+import 'package:mygallerybook/core/app_colors.dart';
 import 'package:mygallerybook/core/app_urls.dart';
+import 'package:mygallerybook/core/app_utils.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderAlbumController extends GetxController {
-  late final List<File> images;
-  int quantity = 1;
-  TextEditingController notes = TextEditingController();
-  int count = 1;
+  final addressIndex = 0.obs;
+  final RxList<File> images = RxList<File>([]);
+  final quantity = 1.obs;
+  final notes = TextEditingController();
+  final profileDetail = Rx<String?>(null);
+  final count = 1.obs;
+  final isAlbumPrint = false.obs;
   var files;
-  bool isLoading = false;
-  double percentage = 0;
-  int sentbytes = 0;
-  int totalbytes = 0;
+  final isLoading = false.obs;
+  final percentage = 0.0.obs;
+  final sentBytes = 0.obs;
+  final totalBytes = 0.obs;
   String? aid;
   String? pid;
-  String? profileDetail;
-  String? uploadtext = 'Uploading Images...';
-
-  int? _selectedItem;
+  String? uploadText = 'Uploading Images...';
+  final selectedItem = (-1).obs;
+  final details = RxList<Map<String, dynamic>>([]);
+  final profile = Rx<Map<String, dynamic>>({});
 
   Future<List<dynamic>> getLatestAlbum() async {
     final url = Uri.parse(AppUrls.productionHost + AppUrls.myOrder);
     final request = http.MultipartRequest('POST', url);
-    final cid = await MyGalleryBookRepository.getCId();
+    final cid = MyGalleryBookRepository.getCId();
     request.fields['cId'] = cid;
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
@@ -39,95 +48,7 @@ class OrderAlbumController extends GetxController {
     return orders;
   }
 
-  selectItem(index) {
-    _selectedItem = index as int;
-    aid = details[index]['aId'] as String;
-    print('aid ==== $aid');
-  }
-
-  // imagegs(context) async {
-  //   if (aid == null) {
-  //     AppUtils.flushBarshow(
-  //         "Please Select Delivery Address", context, AppColors.red);
-  //   } else {
-  //     _isLoading = true;
-  //     var url =
-  //         Uri.parse(AppUrls.productionHost + AppUrls.albumOrder).toString();
-  //
-  //     // Dio dio = Dio();
-  //     List<myDio.MultipartFile> filesarray = [];
-  //     for (var i = 0; i < files.length; i++) {
-  //       filesarray.add(myDio.MultipartFile.fromFileSync(files[i].path,
-  //           filename: files[i].path.split('/').last,
-  //           contentType: MediaType(
-  //               "image", files[i].path.split('/').last.split(".")[1])));
-  //       print(files[i].path.split('/').last);
-  //       print(files[i].path.split('/').last.split(".")[1]);
-  //     }
-  //     var formData = myDio.FormData.fromMap({
-  //       "cId": cid,
-  //       "aId": aid,
-  //       "pId": pid,
-  //       "image": filesarray,
-  //       "oQuantity": quantity,
-  //       "oNote": notes.text == null ? "" : notes.text
-  //     });
-  //     var response = await myDio.Dio().post(url, data: formData,
-  //         onSendProgress: (int sent, int total) {
-  //       final progress = sent / total;
-  //       sentbytes = sent;
-  //       totalbytes = total;
-  //       percentage = progress;
-  //       percentage == 1.0
-  //           ? uploadtext = "Please Wait, Accepting Order..."
-  //           : uploadtext = "Uploading Images...";
-  //       print(progress);
-  //     });
-  //     print(response.data);
-  //     if ((response.data)
-  //         .toString()
-  //         .toLowerCase()
-  //         .contains("next month".toLowerCase())) {
-  //       AppUtils.flushBarshow(response.data, context, AppColors.color3);
-  //       _isLoading = false;
-  //       uploadtext = response.data;
-  //       Future.delayed(const Duration(milliseconds: 2500), () {
-  //         Get.toNamed(Routes.HOME);
-  //       });
-  //     } else if ((response.data)
-  //         .toString()
-  //         .toLowerCase()
-  //         .contains("closed".toLowerCase())) {
-  //       AppUtils.flushBarshow(response.data, context, AppColors.color3);
-  //       _isLoading = false;
-  //       uploadtext = response.data;
-  //       Future.delayed(const Duration(milliseconds: 2500), () {
-  //         Get.toNamed(Routes.HOME);
-  //       });
-  //     } else if ((response.data)
-  //         .toString()
-  //         .contains(new RegExp(r'Success', caseSensitive: false))) {
-  //       AppUtils.flushBarshow(response.data.toString() + "Images Uploaded",
-  //           context, AppColors.green);
-  //       _isLoading = false;
-  //       uploadtext = response.data;
-  //       Future.delayed(const Duration(milliseconds: 2000), () async {
-  //         await _deleteAppDir();
-  //         await _deleteCacheDir();
-  //         Navigator.pushAndRemoveUntil(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => BottomBar()),
-  //             (route) => route.settings.name == 'BottomBar');
-  //       });
-  //     } else {
-  //       print(response.data);
-  //       AppUtils.flushBarshow("Something Went Wrong", context, AppColors.red);
-  //       uploadtext = response.data;
-  //     }
-  //   }
-  // }
-
-  Future<void> _deleteCacheDir() async {
+  Future<void> deleteCacheDir() async {
     final cacheDir = await getTemporaryDirectory();
 
     if (cacheDir.existsSync()) {
@@ -143,8 +64,139 @@ class OrderAlbumController extends GetxController {
     }
   }
 
-  List details = [];
-  var profile;
+  selectItem(index) {
+    selectedItem.value = index;
+    aid = details[index]['aId'] as String;
+    print('aid ==== $aid');
+    update();
+  }
+
+  void imagegs() async {
+    if (aid == null) {
+      AppUtils.flushbarShow(
+        AppColors.red,
+        "Please Select Delivery Address",
+        Get.context!,
+      );
+      return;
+    }
+    isLoading.value = true;
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://www.mygallerybook.com/order'),
+      );
+
+      request.fields.addAll({
+        'cId': MyGalleryBookRepository.getCId(),
+        'pId': pid!,
+        'aId': aid!,
+        'oQuantity': quantity.value.toString(),
+        'oNote': notes.text,
+      });
+
+      for (var file in images) {
+        String mimeType =
+            lookupMimeType(file.path) ?? 'application/octet-stream';
+        String fileName = path.basename(file.path);
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'image[]',
+            file.path,
+            contentType: MediaType.parse(mimeType),
+          ),
+        );
+      }
+
+      http.StreamedResponse response = await request.send();
+      response.stream.transform(utf8.decoder).listen((value) async {
+        print(value);
+        if (response.statusCode == 200) {
+          void updateBusinessController() {
+            final businessController = Get.find<BusinessController>();
+            businessController.myPack();
+            businessController.orderAlbums();
+            businessController.myOrders();
+            businessController.listOrdersUI.refresh();
+            businessController.orders.refresh();
+          }
+
+          if (value.toLowerCase().contains("next month")) {
+            updateBusinessController();
+            AppUtils.flushbarShow(AppColors.color3, value, Get.context!);
+            isLoading.value = false;
+            uploadText = value;
+            Future.delayed(const Duration(milliseconds: 2500), () {
+              Get.offAllNamed(Routes.HOME);
+            });
+          } else if (value.toLowerCase().contains("closed")) {
+            updateBusinessController();
+            AppUtils.flushbarShow(AppColors.color3, value, Get.context!);
+            isLoading.value = false;
+            uploadText = value;
+            Future.delayed(const Duration(milliseconds: 2500), () {
+              Get.offAllNamed(Routes.HOME);
+            });
+          } else if (value.contains(RegExp(r'Success', caseSensitive: false))) {
+            updateBusinessController();
+            AppUtils.flushbarShow(
+              AppColors.green,
+              "$value Images Uploaded",
+              Get.context!,
+            );
+            isLoading.value = false;
+            uploadText = value;
+            Future.delayed(const Duration(milliseconds: 2000), () async {
+              await _deleteAppDir();
+              Get.toNamed(Routes.HOME);
+            });
+          } else if (RegExp(
+                  r'\b(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)\b')
+              .hasMatch(value)) {
+            updateBusinessController();
+            AppUtils.flushbarShow(
+              AppColors.green,
+              "$value Images Uploaded",
+              Get.context!,
+            );
+            isLoading.value = false;
+            uploadText = value;
+            Future.delayed(const Duration(milliseconds: 2000), () async {
+              await _deleteAppDir();
+              Get.toNamed(Routes.HOME);
+            });
+          } else {
+            updateBusinessController();
+            AppUtils.flushbarShow(
+              AppColors.red,
+              "Unexpected Response: $value",
+              Get.context!,
+            );
+            uploadText = value;
+            Future.delayed(const Duration(milliseconds: 2000), () async {
+              await _deleteAppDir();
+              Get.toNamed(Routes.HOME);
+            });
+          }
+        } else {
+          AppUtils.flushbarShow(
+            AppColors.red,
+            "Error: ${response.reasonPhrase}",
+            Get.context!,
+          );
+        }
+      });
+    } catch (e) {
+      print("Error during image upload: $e");
+      AppUtils.flushbarShow(
+        AppColors.red,
+        "Image upload failed",
+        Get.context!,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   getAddress() async {
     final url = Uri.parse(AppUrls.productionHost + AppUrls.getAddress);
@@ -153,9 +205,10 @@ class OrderAlbumController extends GetxController {
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
     if (data != '[]') {
-      details = jsonDecode(data) as List;
+      log("this is the get address details${jsonDecode(data)}");
+      details.value = List<Map<String, dynamic>>.from(jsonDecode(data));
     } else {
-      details = [];
+      details.value = [];
       Get.toNamed(Routes.CREATE_ADDRESS);
     }
   }
@@ -178,35 +231,20 @@ class OrderAlbumController extends GetxController {
     request.fields['cId'] = MyGalleryBookRepository.getCId();
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
-    profile = jsonDecode(data);
-    profileDetail =
-        "${profile["cFName"]} ${profile["cLName"]},\n${MyGalleryBookRepository.getCPhone()},\n${profile["cEmail"]}";
-  }
-
-  List<Widget> getAddressListUI() {
-    final listUI = <Widget>[];
-    for (var index = 0; index < details.length; index++) {
-      listUI.add(
-        CustomItem(
-          selectItem: selectItem,
-          // callback function, setstate for parent
-          index: index,
-          profileDetail: profileDetail ?? '',
-          address:
-              "${details[index]["cDoorNo"]},\n${details[index]["cStreet"]},\n${details[index]["cLandMark"]},\n${details[index]["cCity"]},\n${details[index]["cPincode"]} ",
-          isSelected: _selectedItem == index ? true : false,
-        ),
-      );
-    }
-    return listUI;
+    log('$data this is the profiles data');
+    profile.value = jsonDecode(data);
+    log("${profile.value}after jsonDecode");
+    profileDetail.value =
+        "${profile.value["cFName"]} ${profile.value["cLName"]},\n${MyGalleryBookRepository.getCPhone()},\n${profile.value["cEmail"]}";
   }
 
   @override
   void onInit() {
+    print("OrderAlbum OnInit has been called");
     SharedPreferences.getInstance().then((value) {
-      count = value.getInt('albumCount') ?? 1;
-      files = images;
-      print('fileimage array is $files');
+      count.value = value.getInt('albumCount') ?? 1;
+      files = Get.arguments;
+      images.value = files;
       getProfile();
       getAddress();
       getsubscription();

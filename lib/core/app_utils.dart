@@ -2,8 +2,9 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mygallerybook/app/routes/app_pages.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mygallerybook/core/app_colors.dart';
+import 'package:mygallerybook/core/app_sizes.dart';
 
 class AppUtils {
   static Future<T?> showDialog<T>({
@@ -86,31 +87,76 @@ class AppUtils {
         duration: const Duration(seconds: 5),
       ).show(context);
 
-  static void showConfirmationAlert(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Upload'),
-          content: const Text(
-            'Are you sure do you want to continue to upload the images?',
+  static Future showConfirmationAlert({
+    required BuildContext context,
+    required String titleText,
+    required String contentText,
+    required Function() onCancel,
+    required Function() onConfirm,
+  }) {
+    return Get.dialog(AlertDialog(
+      title: Text(
+        titleText,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text(contentText),
+      actions: [
+        TextButton(
+          onPressed: onCancel,
+          child: const Text(
+            'No',
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.toNamed<void>(Routes.ORDER_ALBUM);
-              },
-              child: const Text('Confirm'),
-            ),
-            TextButton(
-              onPressed: Get.back<void>,
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
+        ),
+        TextButton(
+          onPressed: onConfirm,
+          child: const Text('Yes'),
+        ),
+      ],
+    ));
+  }
+
+  static Future<bool?> showConfirmationAlbumAlert(
+      BuildContext context, int value) {
+    return Get.dialog(
+      AlertDialog(
+        title: const Text(
+          'Finalize Album',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Are you sure do you want finalize the album with $value images',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back(result: true);
+            },
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back(result: false);
+            },
+            child: const Text('No'),
+          ),
+        ],
+      ),
     );
   }
+
+  static final Widget loadingOverlay = Material(
+    color: Colors.white.withOpacity(0.1),
+    child: Center(
+      child: SizedBox.square(
+        dimension: AppSizes.x8_0,
+        child: LoadingAnimationWidget.twistingDots(
+          leftDotColor: const Color(0xff006DFB),
+          rightDotColor: const Color(0xffF8F8F8),
+          size: 80,
+        ),
+      ),
+    ),
+  );
 
   static Future<void> poPup(BuildContext context) {
     return showDialog(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mygallerybook/app/modules/all_orders/controllers/all_orders_controller.dart';
-import 'package:mygallerybook/app/modules/all_orders/widgets/order_card.dart';
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
+import 'package:mygallerybook/app/modules/home/widgets/order_card.dart';
 import 'package:mygallerybook/app/routes/app_pages.dart';
 import 'package:mygallerybook/core/app_colors.dart';
 
@@ -64,51 +64,45 @@ class AllOrdersView extends GetView<AllOrdersController> {
                       : ListView.builder(
                           itemCount: controller.orders.length,
                           itemBuilder: (BuildContext context, int index) {
-                            // log("My orders is calling");
-                            final status = controller.orders[index]['oStatus'];
+                            final order = controller.orders[index];
+                            if (order.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            final status = order["oStatus"] ?? '1';
+                            final uploadImages = order["UploadImages"] ?? [];
                             return OrderCard(
-                              album: controller.orders[index]['albumId']
-                                  .toString(),
-                              color: controller.orders[index]['oStatus'] == '1'
+                              album: order["albumId"].toString(),
+                              color: order["oStatus"] == '1'
                                   ? AppColors.color1
-                                  : controller.orders[index]['oStatus'] == '5'
+                                  : order["oStatus"] == '5'
                                       ? AppColors.green
                                       : AppColors.color3,
                               status: controller.getStatus(status.toString()),
-                              timages:
-                                  controller.orders[index]['NofoImages'] as int,
+                              timages: order["NofoImages"] ?? 0,
                               onPress: () {
                                 Get.toNamed(
                                   Routes.ORDER_DETAILS,
                                   arguments: {
-                                    'aid': controller.orders[index]['aId'],
-                                    'pid': controller.orders[index]['pId'],
-                                    'albumId': controller.orders[index]
-                                        ['albumId'],
-                                    // 'cid': controller.cid ?? '',
+                                    'aid': order["aId"],
+                                    'pid': order["pId"],
+                                    'albumId': order["albumId"],
                                     'cid': MyGalleryBookRepository.getCId(),
-                                    'feedback': controller.orders[index]
-                                            ['feedback'] ??
-                                        '',
+                                    'feedback': order["feedback"] ?? '',
+                                    "photos": order["UploadImages"],
                                   },
                                 );
                               },
-                              image1: controller.orders[index]['UploadImages']
-                                      [0]
-                                  .toString(),
-                              image2: controller.orders[index]['UploadImages']
-                                          .toString()
-                                          .length >
-                                      1
-                                  ? controller.orders[index]['UploadImages'][1]
-                                      .toString()
+                              image1: uploadImages.isNotEmpty
+                                  ? uploadImages[0].toString()
+                                  : "",
+                              image2: uploadImages.length > 1
+                                  ? uploadImages[1].toString()
                                   : null,
-                              image3: controller.orders[index]['UploadImages']
-                                          .toString()
-                                          .length >
-                                      2
-                                  ? controller.orders[index]['UploadImages'][2]
-                                      .toString()
+                              image3: uploadImages.length > 2
+                                  ? uploadImages[2].toString()
+                                  : null,
+                              image4: uploadImages.length > 3
+                                  ? uploadImages[3].toString()
                                   : null,
                             );
                           },

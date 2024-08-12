@@ -200,7 +200,7 @@ class SubscriptionCards extends StatelessWidget {
                     const SizedBox(height: 15),
                     MyButton(
                       btntext: 'SELECT',
-                      onPress: onPress,
+                      onPress: () {},
                       color: AppColors.white,
                       textcolor: color,
                     ),

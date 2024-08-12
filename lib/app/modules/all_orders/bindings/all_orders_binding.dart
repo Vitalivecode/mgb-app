@@ -4,8 +4,6 @@ import 'package:mygallerybook/app/modules/all_orders/controllers/all_orders_cont
 class AllOrdersBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AllOrdersController>(
-      AllOrdersController.new,
-    );
+    Get.lazyPut<AllOrdersController>(AllOrdersController.new);
   }
 }

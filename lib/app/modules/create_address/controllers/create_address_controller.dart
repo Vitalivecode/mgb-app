@@ -9,13 +9,11 @@ import 'package:mygallerybook/core/app_urls.dart';
 import 'package:mygallerybook/core/app_utils.dart';
 
 class CreateAddressController extends GetxController {
-  Type get context => BuildContext;
-
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   ProfileModel profile = ProfileModel();
 
-  createAddress() async {
-    AppUtils.poPup(context as BuildContext);
+  createAddress(BuildContext context) async {
+    AppUtils.poPup(context);
     final url = Uri.parse(AppUrls.productionHost + AppUrls.createAddress);
     final request = http.MultipartRequest('POST', url);
     request.fields['cId'] = MyGalleryBookRepository.getCId();
@@ -27,14 +25,6 @@ class CreateAddressController extends GetxController {
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
     Get.back();
-    // Navigator.of(context).pop(true);
-    // Navigator.pop(context, () {
-    //   setState(() {});
-    // });
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }

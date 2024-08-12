@@ -18,9 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CreateProfileController extends GetxController {
   File? image;
 
-  Type get context => BuildContext;
-
-
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   ProfileModel profile = ProfileModel();
   String? genderSelected;
@@ -51,8 +48,8 @@ class CreateProfileController extends GetxController {
     image = File(pickedFile!.path);
   }
 
-  createProfile() async {
-    AppUtils.poPup(context as BuildContext);
+  createProfile(BuildContext context) async {
+    AppUtils.poPup(context);
     final url = Uri.parse(AppUrls.productionHost + AppUrls.createProfile);
     final request = MultipartRequest(
       'POST',
@@ -87,7 +84,7 @@ class CreateProfileController extends GetxController {
 
   String? validateEmail(String? value) {
     const pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[  0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     final regex = RegExp(pattern);
     if (!regex.hasMatch(value!.trim())) {
       return 'Enter Valid Email';

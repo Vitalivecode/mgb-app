@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
 import 'package:mygallerybook/app/modules/login/controllers/login_controller.dart';
 import 'package:mygallerybook/core/app_assets.dart';
 import 'package:mygallerybook/core/app_colors.dart';
-import 'package:mygallerybook/core/app_utils.dart';
+import 'package:mygallerybook/core/reusable_widgets/my_gallery_book_backGround.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({super.key});
@@ -20,95 +19,77 @@ class LoginView extends GetView<LoginController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            MyGalleryBookBackground(
               height: height * 0.4,
               width: width,
               color: AppColors.blue,
+              image: AppAssets.appIcon,
+              textColor: AppColors.white,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    AppAssets.appIcon,
-                    height: 150,
+                  SizedBox(height: height * 0.1),
+                  Form(
+                    key: controller.formKey,
+                    child: TextFormField(
+                      maxLength: 10,
+                      controller: controller.phoneNumber,
+                      keyboardType: TextInputType.number,
+                      validator: (value) => controller.validator(value),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      style: textTheme.bodyLarge!.copyWith(
+                        fontSize: width * .04,
+                        inherit: true,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        errorStyle: textTheme.bodyLarge!.copyWith(
+                          fontSize: width * .03,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.red,
+                        ),
+                        isDense: true,
+                        prefixIcon: const Icon(Icons.sim_card),
+                        filled: true,
+                        fillColor: AppColors.blue.withOpacity(.15),
+                        labelText: 'Phone Number',
+                        labelStyle: textTheme.bodyLarge!.copyWith(
+                          fontSize: width * .04,
+                          inherit: true,
+                          color: Colors.black.withOpacity(0.8),
+                        ),
+                        hintText: 'Enter Phone Number',
+                        hintStyle: textTheme.bodyLarge!.copyWith(
+                          fontSize: width * .04,
+                          inherit: true,
+                          color: Colors.black.withOpacity(0.4),
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: width * .04),
+                        border: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(width * .04),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'My Gallery Book',
-                    style: textTheme.bodyLarge!
-                        .copyWith(fontSize: 26, color: AppColors.white),
+                  const SizedBox(
+                    height: 22,
+                  ),
+                  MyButton(
+                    onPress: () {
+                      controller.check(context);
+                    },
+                    btntext: 'Get OTP',
+                    color: AppColors.blue,
+                    textcolor: AppColors.white,
                   ),
                 ],
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: height * 0.1),
-                TextFormField(
-                  controller: controller.phoneNumber,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Enter Phone Number';
-                    } else if (value.length != 10) {
-                      return 'Enter 10 digit Valid Phone Number';
-                    } else if (!value.isPhoneNumber) {
-                      return 'Enter Valid Phone Number';
-                    } else {
-                      AppUtils.showDialog(text: 'Please Wait...');
-                    }
-                    return null;
-                  },
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(10),
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  style: textTheme.bodyLarge!.copyWith(
-                    fontSize: width * .04,
-                    inherit: true,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    errorStyle: textTheme.bodyLarge!.copyWith(
-                      fontSize: width * .03,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.red,
-                    ),
-                    isDense: true,
-                    prefixIcon: const Icon(Icons.sim_card),
-                    filled: true,
-                    fillColor: AppColors.blue.withOpacity(.15),
-                    labelText: 'Phone Number',
-                    labelStyle: textTheme.bodyLarge!.copyWith(
-                      fontSize: width * .04,
-                      inherit: true,
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-                    hintText: 'Enter Phone Number',
-                    hintStyle: textTheme.bodyLarge!.copyWith(
-                      fontSize: width * .04,
-                      inherit: true,
-                      color: Colors.black.withOpacity(0.4),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: width * .04),
-                    border: UnderlineInputBorder(
-                      borderRadius: BorderRadius.circular(width * .04),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 22,
-                ),
-                MyButton(
-                  onPress: () async {
-                    return await controller.check(context);
-                  },
-                  btntext: 'Get OTP',
-                  color: AppColors.blue,
-                  textcolor: AppColors.white,
-                ),
-              ],
             ),
           ],
         ),

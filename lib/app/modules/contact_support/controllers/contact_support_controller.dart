@@ -14,7 +14,6 @@ class ContactSupportController extends GetxController {
 
   Future<Map> getContactDetails() async {
     final dio = Dio();
-
     final res = await dio.get(AppUrls.productionHost + AppUrls.contactSupport);
     final Map data = jsonDecode(res.toString()) as Map;
     phone = data['phoneNo'].toString();

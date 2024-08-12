@@ -10,9 +10,9 @@ class ImagepickerView extends GetView<ImagepickerController> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return WillPopScope(
       onWillPop: () async {
-        // Navigator.of(context).pop(true);
         Get.back();
         return true;
       },
@@ -20,122 +20,115 @@ class ImagepickerView extends GetView<ImagepickerController> {
         appBar: AppBar(
           title: const Text('Order Album'),
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              // Navigator.of(context).pop(true);
-              Get.back();
-            },
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Get.back(),
           ),
         ),
         body: SafeArea(
           child: ListView(
             children: <Widget>[
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Upload Images 25 out of 100 at a time'),
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Center(
-                      child: Column(
-                        children: <Widget>[
-                          MyButton(
-                            onPress: () {
-                              if (controller.ram < 4) {
-                                controller.alertDialogOfLowSpecUI(context);
-                              } else {
-                                controller.loadAssets(context);
-                              }
-                            },
-                            btntext: controller.fileImageArray.isNotEmpty
-                                ? 'Select More'
-                                : 'Select images',
-                            color: AppColors.blue,
-                            textcolor: AppColors.white,
-                          ),
-                          const SizedBox(height: 20),
-                          if (controller.fileImageArray.isNotEmpty)
-                            MyButton(
-                              onPress: controller.fileImageArray.isNotEmpty
-                                  ? () {
-                                      print("order album clicked");
-                                      // showConfirmationAlert(context);
-                                      AppUtils.showConfirmationAlert(context);
-                                    }
-                                  : () {
-                                      AppUtils.flushbarShow(
-                                        AppColors.red,
-                                        'Please Select Min. 1 Image, Max. of 25 Images allowed at a time',
-                                        context,
-                                      );
-                                    },
-                              btntext: 'Order Album',
-                              color: AppColors.blue,
-                              border: false,
-                              textcolor: AppColors.blue,
-                            ),
-                        ],
-                      ),
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    'Upload Images 25 out of 100 at a time',
+                    style: textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (controller.fileImageArray.isNotEmpty)
-                    Column(
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: RichText(
-                              text: TextSpan(
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
+                ),
+              ),
+              Obx(
+                () => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          children: <Widget>[
+                            controller.images.length < 25
+                                ? MyButton(
+                                    onPress: () {
+                                      controller.loadAssets(context);
+                                    },
+                                    btntext: controller.images.isNotEmpty
+                                        ? 'Select More'
+                                        : 'Select images',
+                                    color: AppColors.blue,
+                                    textcolor: AppColors.white,
+                                  )
+                                : const LimitedBox(),
+                            const SizedBox(height: 20),
+                            if (controller.images.isNotEmpty)
+                              MyButton(
+                                onPress: () {
+                                  if (controller.images.isNotEmpty) {
+                                    controller.showConfirmationAlert(context);
+                                  } else {
+                                    AppUtils.flushbarShow(
+                                      AppColors.red,
+                                      'Please select at least 1 image. Max. of 25 images allowed at a time.',
+                                      context,
+                                    );
+                                  }
+                                },
+                                btntext: 'Order Album',
+                                color: AppColors.blue,
+                                border: false,
+                                textcolor: AppColors.blue,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (controller.images.isNotEmpty)
+                      Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    color: Colors.black,
+                                  ),
+                                  children: <TextSpan>[
+                                    const TextSpan(
+                                      text: ' Selected ',
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${controller.images.length} ',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const TextSpan(
+                                      text: 'Images',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                children: <TextSpan>[
-                                  const TextSpan(
-                                    text: ' Selected ',
-                                    style: TextStyle(
-                                      fontSize: 25,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        '${controller.fileImageArray.length} ',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const TextSpan(
-                                    text: 'Images',
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 25,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ),
-                        ),
-                        if (controller.isLoading.value)
-                          const CircularProgressIndicator()
-                        else
                           Wrap(children: controller.imagesListUI),
-                      ],
-                    )
-                  else
-                    Container(),
-                ],
+                        ],
+                      )
+                    else
+                      Container(),
+                  ],
+                ),
               ),
             ],
           ),

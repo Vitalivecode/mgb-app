@@ -11,7 +11,7 @@ class MyButton extends StatelessWidget {
     this.border = true,
   });
 
-  final void Function()? onPress;
+  final Function onPress;
   final String btntext;
   final Color color;
   final Color textcolor;
@@ -21,7 +21,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return MaterialButton(
-      onPressed: onPress,
+      onPressed: () => onPress(),
       padding: EdgeInsets.symmetric(vertical: width * .04),
       minWidth: width * .8,
       elevation: 0,

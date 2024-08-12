@@ -14,7 +14,7 @@ class PaymentHistoryController extends GetxController {
       'POST',
       Uri.parse(AppUrls.productionHost + AppUrls.myPacks),
     );
-    request.fields['cId'] = await MyGalleryBookRepository.getCId() ?? '';
+    request.fields['cId'] = MyGalleryBookRepository.getCId() ?? '';
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
     print(data);

@@ -24,79 +24,28 @@ class HomeView extends GetView<HomeController> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        elevation: 0,
-        backgroundColor: AppColors.blue,
-        splashColor: AppColors.darkBlue,
-        onPressed: controller.pack == '0'
-            ? () {
-                Feedback.forTap(context);
-                HapticFeedback.mediumImpact();
-                Get.toNamed(Routes.SUBSCRIPTION);
-              }
-            : () async {
-                Feedback.forTap(context);
-                HapticFeedback.lightImpact();
-                Get.toNamed(Routes.IMAGEPICKER);
-              },
-        child: const Icon(Icons.add),
+      floatingActionButton: Obx(
+        () => FloatingActionButton(
+          heroTag: null,
+          elevation: 0,
+          backgroundColor: AppColors.blue,
+          splashColor: AppColors.darkBlue,
+          onPressed: controller.pack.isEmpty ||
+                  controller.subscriptionEndedDate.value! < 0
+              ? () {
+                  Feedback.forTap(context);
+                  HapticFeedback.mediumImpact();
+                  Get.toNamed(Routes.SUBSCRIPTION);
+                }
+              : () async {
+                  Feedback.forTap(context);
+                  HapticFeedback.lightImpact();
+                  Get.toNamed(Routes.IMAGEPICKER);
+                },
+          child: const Icon(Icons.add),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // bottomNavigationBar: BottomAppBar(
-      //   elevation: 0,
-      //   notchMargin: 10,
-      //   color: Colors.transparent,
-      //   clipBehavior: Clip.antiAlias,
-      //   shape: const CircularNotchedRectangle(),
-      //   child: Container(
-      //     height: width * .15,
-      //     decoration: BoxDecoration(
-      //         color: AppColors.blue,
-      //         borderRadius:
-      //             BorderRadius.vertical(top: Radius.circular(width * .08))),
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //       children: <Widget>[
-      //         ClipRRect(
-      //           borderRadius:
-      //               BorderRadius.only(topLeft: Radius.circular(width * .08)),
-      //           child: MaterialButton(
-      //             minWidth: width * .5,
-      //             height: width * .15,
-      //             splashColor: Colors.transparent,
-      //             onPressed: () => controller.currentIndex = 0,
-      //             child: Icon(
-      //               Icons.business,
-      //               size: controller.currentIndex == 0 ? 35 : 20,
-      //               color: controller.currentIndex == 0
-      //                   ? AppColors.white
-      //                   : AppColors.white.withOpacity(.2),
-      //             ),
-      //           ),
-      //         ),
-      //         Flexible(
-      //           child: ClipRRect(
-      //             borderRadius:
-      //                 BorderRadius.only(topRight: Radius.circular(width * .08)),
-      //             child: MaterialButton(
-      //               minWidth: width * .5,
-      //               height: width * .15,
-      //               onPressed: () => controller.currentIndex = 1,
-      //               child: Icon(
-      //                 Icons.business_center,
-      //                 size: controller.currentIndex == 1 ? 35 : 20,
-      //                 color: controller.currentIndex == 1
-      //                     ? AppColors.white
-      //                     : AppColors.white.withOpacity(.2),
-      //               ),
-      //             ),
-      //           ),
-      //         )
-      //       ],
-      //     ),
-      //   ),
-      // ),
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(width * .08)),
         child: BottomAppBar(
@@ -118,14 +67,20 @@ class HomeView extends GetView<HomeController> {
               currentIndex: controller.currentIndex.value,
               onTap: (value) =>
                   controller.currentIndex.value = value.clamp(0, 1),
-              items: const [
+              items: [
                 BottomNavigationBarItem(
                   label: 'business',
-                  icon: Icon(Icons.business),
+                  icon: Icon(
+                    Icons.business,
+                    size: controller.currentIndex.value == 0 ? 38 : 24,
+                  ),
                 ),
                 BottomNavigationBarItem(
                   label: 'work',
-                  icon: Icon(Icons.work),
+                  icon: Icon(
+                    Icons.work,
+                    size: controller.currentIndex.value == 1 ? 38 : 24,
+                  ),
                 ),
               ],
             ),

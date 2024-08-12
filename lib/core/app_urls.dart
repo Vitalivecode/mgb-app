@@ -16,6 +16,7 @@ class AppUrls {
   static const createProfile = '/customer/profile';
 
   static const getProfile = '/customer/profileData';
+  static const finalizedAlbum = '/order/finalized';
 
   static const createAddress = '/customer/address';
 
@@ -43,4 +44,5 @@ class AppUrls {
 
   static const courierUrl =
       'https://track.aftership.com/trackings?courier=dtdc&tracking-numbers=';
+  static const order = '/order';
 }

@@ -38,22 +38,22 @@ class _SplashState extends State<Splash> {
 
   _fetchSessionAndNavigate() async {
     if (kIsWeb) {
-      if (MyGalleryBookRepository.getCId() == null) {
+      if (MyGalleryBookRepository.getCId().isEmpty) {
         Get.toNamed(Routes.LOGIN);
-      } else if (MyGalleryBookRepository.getCEmail() == null) {
+      } else if (MyGalleryBookRepository.getCEmail().isEmpty) {
         Get.toNamed(Routes.OTP_VERIFICATION);
       } else {
-        getmypack();
+        getMyPack();
       }
     } else {
       final isInternetEnable = await isInternet();
       if (isInternetEnable) {
-        if (MyGalleryBookRepository.getCId() == null) {
+        if (MyGalleryBookRepository.getCId().isEmpty) {
           Get.toNamed(Routes.LOGIN);
-        } else if (MyGalleryBookRepository.getCEmail() == null) {
+        } else if (MyGalleryBookRepository.getCEmail().isEmpty) {
           Get.toNamed(Routes.OTP_VERIFICATION);
         } else {
-          getmypack();
+          getMyPack();
         }
       } else {
         Get.to(const NoConnection());
@@ -61,13 +61,13 @@ class _SplashState extends State<Splash> {
     }
   }
 
-  getmypack() async {
+  void getMyPack() async {
     final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
     final request = http.MultipartRequest('POST', url);
     request.fields['cId'] = MyGalleryBookRepository.getCId();
     final response = await request.send();
     final data = await response.stream.transform(utf8.decoder).join();
-    if (MyGalleryBookRepository.getpId() == null) {
+    if (MyGalleryBookRepository.getpId().isEmpty) {
       Get.toNamed(Routes.CREATE_PROFILE);
     } else if (data != '[]') {
       final details = jsonDecode(data);
@@ -91,7 +91,6 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Container(
         height: height,
@@ -118,12 +117,13 @@ class _SplashState extends State<Splash> {
               height: 10,
             ),
             const Spacer(),
-            Text(
+            const Text(
               'Powered by Mygallerybook',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelMedium
-                  ?.copyWith(fontSize: 14, color: AppColors.white),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 10),
           ],

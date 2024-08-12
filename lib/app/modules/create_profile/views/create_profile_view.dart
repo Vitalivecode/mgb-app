@@ -203,7 +203,7 @@ class CreateProfileView extends GetView<CreateProfileController> {
                           } else if (controller.formKey.currentState!
                               .validate()) {
                             controller.formKey.currentState!.save();
-                            controller.createProfile();
+                            controller.createProfile(context);
                           }
                         },
                         btntext: 'Continue',

@@ -22,6 +22,7 @@ abstract class Routes {
   static const ORDER_DETAILS = _Paths.ORDER_DETAILS;
   static const CONTACT_SUPPORT = _Paths.CONTACT_SUPPORT;
   static const TEMPLATES = _Paths.TEMPLATES;
+  static const REUPLOAD_IMAGES = _Paths.REUPLOAD_IMAGES;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const ORDER_DETAILS = '/order-details';
   static const CONTACT_SUPPORT = '/contact-support';
   static const TEMPLATES = '/templates';
+  static const REUPLOAD_IMAGES = '/reupload-images';
 }

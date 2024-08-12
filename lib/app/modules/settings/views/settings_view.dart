@@ -2,8 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mygallerybook/app/modules/all_orders/controllers/all_orders_controller.dart';
+import 'package:mygallerybook/app/modules/all_orders/views/all_orders_view.dart';
+import 'package:mygallerybook/app/modules/contact_support/controllers/contact_support_controller.dart';
+import 'package:mygallerybook/app/modules/contact_support/views/contact_support_view.dart';
+import 'package:mygallerybook/app/modules/payment_history/controllers/payment_history_controller.dart';
+import 'package:mygallerybook/app/modules/payment_history/views/payment_history_view.dart';
+import 'package:mygallerybook/app/modules/profile/controllers/profile_controller.dart';
+import 'package:mygallerybook/app/modules/profile/views/profile_view.dart';
 import 'package:mygallerybook/app/modules/settings/controllers/settings_controller.dart';
-import 'package:mygallerybook/app/routes/app_pages.dart';
+import 'package:mygallerybook/app/modules/subscription/controllers/subscription_controller.dart';
+import 'package:mygallerybook/app/modules/subscription/views/subscription_view.dart';
 import 'package:mygallerybook/core/app_colors.dart';
 import 'package:share/share.dart';
 
@@ -46,26 +55,38 @@ class SettingsView extends GetView<SettingsController> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
-                  child: Container(
-                    child: Text(
-                      'Welcome ${controller.name}',
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  child: SizedBox(
+                    child: Obx(
+                      () {
+                        return controller.isLoading.value
+                            ? const LinearProgressIndicator()
+                            : Text(
+                                'Welcome ${controller.name.value}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              );
+                      },
                     ),
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     children: [
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.PROFILE);
+                          // Get.toNamed(Routes.PROFILE);
+                          Get.lazyPut(() => ProfileController());
+                          Get.to(
+                            const ProfileView(),
+                            transition: Transition.downToUp,
+                            duration: 300.milliseconds,
+                          );
                         },
                         child: const Card(
                           elevation: 6,
@@ -92,7 +113,13 @@ class SettingsView extends GetView<SettingsController> {
                       ),
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.PAYMENT_HISTORY);
+                          Get.lazyPut(() => PaymentHistoryController());
+                          Get.to(
+                            const PaymentHistoryView(),
+                            transition: Transition.downToUp,
+                            duration: 300.milliseconds,
+                          );
+                          // Get.toNamed(Routes.PAYMENT_HISTORY);
                         },
                         child: const Card(
                           elevation: 6,
@@ -119,7 +146,13 @@ class SettingsView extends GetView<SettingsController> {
                       ),
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.ALL_ORDERS);
+                          Get.lazyPut(() => AllOrdersController());
+                          Get.to(
+                            const AllOrdersView(),
+                            transition: Transition.downToUp,
+                            duration: 300.milliseconds,
+                          );
+                          // Get.toNamed(Routes.ALL_ORDERS);
                         },
                         child: const Card(
                           elevation: 6,
@@ -146,7 +179,13 @@ class SettingsView extends GetView<SettingsController> {
                       ),
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.SUBSCRIPTION);
+                          Get.lazyPut(() => SubscriptionController());
+                          Get.to(
+                            const SubscriptionView(),
+                            transition: Transition.downToUp,
+                            duration: 300.milliseconds,
+                          );
+                          // Get.toNamed(Routes.SUBSCRIPTION);
                         },
                         child: const Card(
                           elevation: 6,
@@ -173,7 +212,13 @@ class SettingsView extends GetView<SettingsController> {
                       ),
                       InkWell(
                         onTap: () {
-                          Get.toNamed(Routes.CONTACT_SUPPORT);
+                          Get.lazyPut(() => ContactSupportController());
+                          Get.to(
+                            const ContactSupportView(),
+                            transition: Transition.downToUp,
+                            duration: 300.milliseconds,
+                          );
+                          // Get.toNamed(Routes.CONTACT_SUPPORT);
                         },
                         child: const Card(
                           elevation: 6,

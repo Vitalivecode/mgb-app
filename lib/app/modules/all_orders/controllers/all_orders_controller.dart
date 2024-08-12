@@ -1,38 +1,38 @@
-import 'dart:developer';
+import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:mygallerybook/app/modules/all_orders/providers/orders_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
+import 'package:mygallerybook/core/app_urls.dart';
 
 class AllOrdersController extends GetxController {
   final loading = true.obs;
+  final orders = <Map<String, dynamic>>[].obs;
   final error = Rx<String?>(null);
   final oStatus = Rx<String?>(null);
-  final orders = <Map>[].obs;
 
-  Future<void> getData() async {
-    print("getDataCalled");
-    if (loading.isTrue) {
-      print("loading isTrue");
-      error.value = null;
-      loading.value = true;
-      try {
-        final result = await OrdersProvider.getOrders(
-          MyGalleryBookRepository.getCId(),
-        );
-        log("${result}this is inside the getData");
-        orders
-          ..clear()
-          ..addAll(result as Iterable<Map>);
+  void getData() async {
+    try {
+      final url = Uri.parse(AppUrls.productionHost + AppUrls.myOrder);
+      final request = http.MultipartRequest("POST", url)
+        ..fields['cId'] = MyGalleryBookRepository.getCId();
+      final response = await request.send();
+      final data = await response.stream.transform(utf8.decoder).join();
+      if (data.isNotEmpty) {
+        final List<dynamic> jsonData = jsonDecode(data);
+        orders.value = jsonData.cast<Map<String, dynamic>>();
         if (orders.isNotEmpty) {
-          oStatus.value = orders[0]['oStatus']?.toString();
-          log("${orders}this is orders data");
+          oStatus.value = orders[0]["oStatus"];
         }
-      } catch (e) {
-        error.value = e.toString();
+      } else {
+        orders.value = [];
       }
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
       loading.value = false;
     }
+    print(orders);
   }
 
   String getStatus(String status) {
@@ -54,9 +54,8 @@ class AllOrdersController extends GetxController {
 
   @override
   void onInit() {
-    print("onInitCalled");
+    print("allOrders onInit called");
     getData();
-    log(orders.toString());
     super.onInit();
   }
 }

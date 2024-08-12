@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:mygallerybook/app/modules/home/repositories/my_gallery_book_repository.dart';
 import 'package:mygallerybook/app/modules/home/widgets/my_button.dart';
@@ -7,6 +6,7 @@ import 'package:mygallerybook/app/modules/otp_verification/controllers/otp_verif
 import 'package:mygallerybook/core/app_assets.dart';
 import 'package:mygallerybook/core/app_colors.dart';
 import 'package:mygallerybook/core/app_utils.dart';
+import 'package:pinput/pinput.dart';
 
 class OtpVerificationView extends GetView<OtpVerificationController> {
   const OtpVerificationView({super.key});
@@ -15,6 +15,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Column(
@@ -80,25 +81,44 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  OtpTextField(
-                    borderColor: Colors.grey,
-                    showFieldAsBox: true,
-                    onCodeChanged: (String code) {},
-                    onSubmit: (String verificationCode) {
-                      controller.otp = verificationCode;
-                    }, // end onSubmit
+                  Pinput(
+                    controller: controller.pInputController,
+                    defaultPinTheme: PinTheme(
+                      width: 56,
+                      height: 56,
+                      textStyle: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryFixedDim.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onCompleted: (String verificationCode) {
+                      controller.otp.value = verificationCode;
+                    },
                   ),
+                  // OtpTextField(
+                  //   borderColor: Colors.grey,
+                  //   showFieldAsBox: true,
+                  //   onCodeChanged: (String code) {},
+                  //   onSubmit: (String verificationCode) {
+                  //     controller.otp = verificationCode;
+                  //   }, // end onSubmit
+                  // ),
                   const SizedBox(height: 30),
                   MyButton(
                     onPress: () {
-                      if (controller.otp == '') {
+                      if (controller.otp.value!.isEmpty) {
                         AppUtils.flushbarShow(
                           AppColors.red,
                           'Please Enter OTP',
                           context,
                         );
                       } else {
-                        controller.verify(context);
+                        controller.verify();
                       }
                     },
                     btntext: 'Verify OTP',
@@ -117,7 +137,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                             ?.copyWith(fontSize: 16, color: AppColors.black),
                       ),
                       GestureDetector(
-                        onTap: () async => await controller.resendotp(context),
+                        onTap: () async => await controller.resendOtp(),
                         child: Text(
                           'Resend',
                           style:

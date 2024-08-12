@@ -26,7 +26,7 @@ class _CustomItemState extends State<CustomItem> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         widget.selectItem(widget.index);
       },
@@ -86,7 +86,6 @@ class _CustomItemState extends State<CustomItem> {
                         widget.profileDetail,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 6,
-                        textScaleFactor: 01,
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium
