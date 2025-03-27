@@ -39,7 +39,6 @@ class LoginView extends GetView<LoginController> {
                       controller: controller.phoneNumber,
                       keyboardType: TextInputType.number,
                       validator: (value) => controller.validator(value),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       style: textTheme.bodyLarge!.copyWith(
                         fontSize: width * .04,
                         inherit: true,

@@ -59,6 +59,7 @@ class SubscriptionController extends GetxController {
                     ? AppColors.color2
                     : AppColors.color3,
             onPress: () {
+              print("Subscription pack called");
               Get.toNamed(
                 Routes.PAYMENT,
                 arguments: {

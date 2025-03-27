@@ -93,7 +93,8 @@ class PaymentController extends GetxController {
     btnText.value = 'Please Wait';
     pay.value = true;
     Future.delayed(const Duration(milliseconds: 5000), () {
-      Get.toNamed(Routes.HOME);
+      // Get.toNamed(Routes.HOME);
+      Get.offAllNamed(Routes.HOME);
     });
   }
 

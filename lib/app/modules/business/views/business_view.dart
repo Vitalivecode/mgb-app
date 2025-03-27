@@ -101,7 +101,10 @@ class BusinessView extends GetView<BusinessController> {
                                                         '${controller.date}') >
                                                     1
                                                 ? '${controller.date} Months'
-                                                : '${controller.date} Month';
+                                                : int.parse('${controller.date}') >=
+                                                        0
+                                                    ? '${controller.date} Month'
+                                                    : "0 Month";
 
                                             String photobooks = controller
                                                         .packs.value[controller

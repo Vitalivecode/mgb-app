@@ -58,7 +58,6 @@ class SubscriptionView extends GetView<SubscriptionController> {
               const SizedBox(height: 20),
               FutureBuilder(
                 future: controller.packs,
-                // ignore: missing_return
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const LinearProgressIndicator();

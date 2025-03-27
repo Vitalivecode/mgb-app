@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,28 +27,26 @@ class HomeController extends GetxController {
   }
 
   Future<List<dynamic>?> myPack() async {
-    final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
-    final request = http.MultipartRequest('POST', url);
-    request.fields['cId'] = MyGalleryBookRepository.getCId();
-    final response = await request.send();
-    final data1 = await response.stream.transform(utf8.decoder).join();
-    final data = jsonDecode(data1)[0];
-    if (data != '[]') {
-      try {
-        packs.value = RxList.of(jsonDecode(data1)) as List<dynamic>;
-        log("${packs.value}this is for checking");
-        expireDate.value = packs.value[packs.value.length - 1]['sEndDate']
-            .split(' ')[0]
-            .toString();
+    try {
+      final url = Uri.parse(AppUrls.productionHost + AppUrls.myPacks);
+      final request = http.MultipartRequest('POST', url);
+      request.fields['cId'] = MyGalleryBookRepository.getCId();
+      final response = await request.send();
+      final data1 = await response.stream.transform(utf8.decoder).join();
+      final decodedData = jsonDecode(data1);
+
+      if (decodedData.isNotEmpty) {
+        packs.value = decodedData;
+        expireDate.value =
+            packs.value.last['sEndDate'].split(' ')[0].toString();
         days();
-        packs.refresh();
-      } catch (e, s) {
-        debugPrintStack(stackTrace: s);
-        debugPrint(e.toString());
+      } else {
+        packs.value = [];
       }
-    } else {
-      packs.value = [];
       packs.refresh();
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
+      debugPrint(e.toString());
     }
     return null;
   }

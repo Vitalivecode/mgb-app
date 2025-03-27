@@ -143,7 +143,8 @@ class OrderDetailsView extends GetView<OrderDetailsController> {
                             controller.albumId),
                       ),
                     ),
-                    controller.orders != null
+                    controller.orders != null &&
+                            controller.oStatus == "someStatus"
                         ? Expanded(child: controller.buildGridView())
                         : Container(),
                   ],

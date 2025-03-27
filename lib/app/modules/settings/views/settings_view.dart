@@ -14,7 +14,7 @@ import 'package:mygallerybook/app/modules/settings/controllers/settings_controll
 import 'package:mygallerybook/app/modules/subscription/controllers/subscription_controller.dart';
 import 'package:mygallerybook/app/modules/subscription/views/subscription_view.dart';
 import 'package:mygallerybook/core/app_colors.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsView extends GetView<SettingsController> {
   const SettingsView({super.key});

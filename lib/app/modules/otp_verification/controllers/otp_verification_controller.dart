@@ -30,6 +30,7 @@ class OtpVerificationController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     var details;
     if ((phoneNumber == "9963879607" ||
+            phoneNumber == "8897303503" ||
             phoneNumber == "6302333317" ||
             phoneNumber == "8367616146" ||
             phoneNumber == "9676546590") &&

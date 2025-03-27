@@ -381,6 +381,7 @@ class OrderDetailsController extends GetxController {
   bFinalized({required String bFinalize}) async {
     print("beFinalized Called");
     print("${bFinalize}this is the bFinalize value");
+    print(albumId.toString());
     var url = Uri.parse(AppUrls.productionHost + AppUrls.finalizedAlbum);
     var request = http.MultipartRequest("POST", url);
     request.fields['albumId'] = albumId;

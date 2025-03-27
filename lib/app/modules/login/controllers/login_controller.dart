@@ -48,18 +48,4 @@ class LoginController extends GetxController {
     Get.back();
     Get.toNamed(Routes.OTP_VERIFICATION);
   }
-
-  @override
-  void onInit() {
-    phoneNumber.addListener(() {
-      formKey.currentState?.validate();
-    });
-    super.onInit();
-  }
-
-  @override
-  void onClose() {
-    phoneNumber.dispose();
-    super.onClose();
-  }
 }
